@@ -1,5 +1,11 @@
 # GoPLC
 
+![Status](https://img.shields.io/badge/status-planning-yellow)
+<!--
+![Status](https://img.shields.io/badge/status-development-blue)
+![Status](https://img.shields.io/badge/status-release%20v1.0.0-green)
+-->
+
 A soft PLC written in Go that replaces proprietary industrial programming languages with modern development tools.
 
 ## What Problem Does This Solve?
