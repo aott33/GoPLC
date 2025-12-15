@@ -1,5 +1,5 @@
 ---
-stepsCompleted: [1, 2, 3, 4, 6, 7]
+stepsCompleted: [1, 2, 3, 4, 6, 7, 8, 9, 10, 11]
 inputDocuments:
   - 'docs/brief.md'
 documentCounts:
@@ -8,7 +8,7 @@ documentCounts:
   brainstorming: 0
   projectDocs: 0
 workflowType: 'prd'
-lastStep: 7
+lastStep: 11
 project_name: 'go-plc'
 user_name: 'Andy'
 date: '2025-12-13'
@@ -151,62 +151,84 @@ If the developer would choose go-plc over CompactLogix for commissioning a real 
 ### MVP - Minimum Viable Product (50 hours)
 
 **Core PLC Runtime:**
-1. **Modbus I/O** - Read/write holding registers and coils with Python Modbus simulator for testing (no physical hardware required)
-2. **Go-based task logic** - Native Go tasks with clean API for variable access and control logic
-3. **Basic monitoring WebUI** - Real-time view of tags/values, task status, connection health
-4. **OPC UA server** - Using gopcua/opcua library for SCADA integration
-5. **Sparkplug B** - MQTT integration for Ignition SCADA connectivity
-6. **Comprehensive documentation** - Docusaurus site with setup, configuration, and examples
+1. **Modbus I/O** - Read/write holding registers and coils via Modbus TCP using simonvetter/modbus library (includes RTU/ASCII for future use). Python Modbus simulator for testing without physical hardware.
+2. **Go-based task logic** - Native Go tasks with clean API for variable access and control logic. Tasks auto-discovered from `/tasks` folder.
+3. **OPC UA server** - Using gopcua/opcua library for SCADA integration (Ignition, Kepware, etc.)
+4. **GraphQL API** - gqlgen-based API with queries and subscriptions. Includes built-in GraphQL Playground for testing and development.
+5. **Monitoring WebUI** - Vite + React + urql frontend connecting to GraphQL backend:
+   - PLC status display with enable/disable operation control (run mode)
+   - Connected device/source status (Modbus, OPC UA connection health)
+   - Variable list with real-time values
+   - Task list with configuration, execution status, and enable/disable control
+6. **Comprehensive documentation** - Docusaurus site with setup, configuration, task programming guide, and tank battery walkthrough
 7. **Tank battery reference implementation** - Real-world control project migrated from CompactLogix
 
 **Reliability Features (MVP):**
-- Modbus automatic reconnection logic
+- Modbus automatic reconnection logic with exponential backoff
 - Logging framework with configurable levels
 - Graceful shutdown handling
 - Basic error handling and reporting
 
 **Technical Validation:**
 - Integration test suite with Python Modbus simulator
-- Integration test with Ignition SCADA (OPC UA and/or Sparkplug B)
+- Integration test with Ignition SCADA via OPC UA
 - Performance benchmarks documented on development hardware
 - Tank battery control logic verified end-to-end
 
-**Done = Working tank battery example + Comprehensive README + <30min quickstart**
+**Done = Working tank battery + Docusaurus docs + <30min quickstart**
 
-### Growth Features (Post-MVP)
+### Growth Features (Phase 2 - Post-MVP)
+
+**Protocol Expansion:**
+- **Sparkplug B** - MQTT publisher implementation using paho.mqtt.golang with Sparkplug B protobuf encoding (NBIRTH/NDATA/NDEATH messages) for Ignition cloud and MQTT-based SCADA integration
+- **Ethernet/IP** - Allen-Bradley ecosystem connectivity enabling:
+  - VFDs (PowerFlex series)
+  - Remote I/O (Point I/O, Flex I/O)
+  - Other Allen-Bradley compatible devices
+
+**Enhanced WebUI:**
+- Source configuration (add, modify, enable/disable Modbus/OPC UA/Ethernet/IP sources)
+- Variable configuration (add, modify, enable/disable variables)
+- Configuration persistence and validation
 
 **Enhanced Reliability:**
 - Persistent state (survive restarts without data loss)
 - Watchdog integration for fault detection
 - Advanced fault tolerance mechanisms
 - Load testing and burn-in validation
-- Production hardening based on 24/7 runtime testing
 
 **Developer Experience:**
 - Hot reload for tasks during development
 - MCP server for AI-assisted PLC programming
-- Enhanced WebUI features (trending, alarming)
-- Additional protocol support (Ethernet/IP, Profinet)
 
-**Community & Ecosystem:**
-- Additional reference implementations (different control scenarios)
-- Performance database with community contributions
-- Example task library
-- Plugin architecture for extensions
+### Vision Features (Phase 3 - Expansion)
 
-### Vision (Future)
+**Industrial Protocol Gateway:**
+- **PROFINET** - Siemens ecosystem connectivity (S7 PLCs, Siemens VFDs, Siemens Remote I/O)
+- **EtherCAT** - High-speed motion control and servo drive integration
+- **BACnet** - Building automation system integration for facility crossover applications
 
-**"Modern software development for industrial automation - why do we still use antiquated methods?"**
+**Target Device Categories:**
+- VFDs (Siemens, ABB, Danfoss, Yaskawa via respective protocols)
+- Remote I/O (WAGO, Beckhoff, Siemens ET 200)
+- HMIs (protocol-agnostic data serving)
+- Servo drives and motion controllers (EtherCAT)
+- Building systems (BACnet-enabled HVAC, lighting, metering)
 
-The north star: Git, CI/CD, modern languages, AI assistance, fast iteration - everything the industry should have adopted years ago but didn't because of vendor lock-in.
+**Protected Browser-based Task Development:**
+- Disabled by default - requires explicit password configuration in YAML to enable
+- Safety features: warning banners, multi-step confirmation before deployment, syntax validation, automatic backup
+- Code editor (Monaco/CodeMirror) for Go task files in separate "Development" tab
+- Intended for remote commissioning scenarios with appropriate guardrails
 
-**Long-term Vision:**
-- Browser-based IDE for remote commissioning
-- Multi-protocol gateway capabilities
+**Platform Features:**
+- Remote parameter tuning via WebUI (setpoints, thresholds)
+- Configuration hot-reload (YAML changes without restart)
 - AI code generation for control logic
 - Community-driven task and pattern library
-- Industry adoption as alternative to proprietary PLC platforms
-- Proven reliability in production deployments running 24/7 for years
+
+**Long-term Vision:**
+go-plc as a universal industrial protocol gateway and soft PLC platform - enabling modern developers to connect any industrial device using familiar tools (Go, Git, VS Code, CI/CD) without vendor lock-in or proprietary IDEs. Proven reliability in production deployments running 24/7 for years.
 
 ## User Journeys
 
@@ -693,3 +715,159 @@ Performance benchmarking framework included in MVP:
 - Memory-efficient protocol buffers for Sparkplug B
 - Connection pooling and resource cleanup
 - Memory leak detection in testing
+
+## Functional Requirements
+
+### PLC Runtime Control
+
+- FR1: Operators can enable/disable the PLC runtime (run mode control)
+- FR2: System can execute Go-based tasks at configurable scan rates
+- FR3: System can auto-discover tasks from the `/tasks` folder
+- FR4: Operators can enable/disable individual tasks at runtime
+- FR5: System can gracefully shutdown without data corruption
+- FR6: System can start with a YAML configuration file
+
+### Variable Management
+
+- FR7: Developers can define variables in YAML with source binding and scaling
+- FR8: System can expose variables to all protocols from a single definition
+- FR9: Tasks can read and write variable values through a clean API
+- FR10: Operators can view all variables and their current values
+- FR11: System can apply linear scaling to variable values (raw to engineering units)
+
+### Modbus Communication
+
+- FR12: System can connect to Modbus TCP devices as a client
+- FR13: System can read holding registers from Modbus devices
+- FR14: System can write holding registers to Modbus devices
+- FR15: System can read coils from Modbus devices
+- FR16: System can write coils to Modbus devices
+- FR17: System can automatically reconnect on Modbus connection failure
+- FR18: Operators can view Modbus connection status (connected/disconnected/error)
+- FR19: Developers can configure multiple Modbus sources with independent polling intervals
+
+### OPC UA Integration
+
+- FR20: System can expose variables as an OPC UA server
+- FR21: SCADA systems can connect to go-plc via OPC UA
+- FR22: SCADA systems can read variable values via OPC UA
+- FR23: SCADA systems can write variable values via OPC UA
+- FR24: Operators can view OPC UA server status
+
+### GraphQL API
+
+- FR25: External applications can query current variable values via GraphQL
+- FR26: External applications can subscribe to variable value changes via GraphQL
+- FR27: External applications can query PLC status via GraphQL
+- FR28: External applications can query task status via GraphQL
+- FR29: External applications can query source/connection status via GraphQL
+- FR30: Developers can test GraphQL queries using built-in GraphQL Playground
+
+### WebUI Monitoring
+
+- FR31: Operators can view PLC runtime status in WebUI
+- FR32: Operators can enable/disable PLC runtime from WebUI
+- FR33: Operators can view all source/device connection status in WebUI
+- FR34: Operators can view variable list with real-time values in WebUI
+- FR35: Operators can view task list with configuration and status in WebUI
+- FR36: Operators can enable/disable individual tasks from WebUI
+- FR37: WebUI can display real-time updates without page refresh
+
+### Task Development
+
+- FR38: Developers can write control logic in native Go
+- FR39: Tasks can access variables through a simple API (no verbose patterns)
+- FR40: Developers can specify task scan rate in task configuration
+- FR41: Developers can rebuild and deploy tasks in under 1 minute
+- FR42: System can report task execution errors with clear messages
+
+### Logging & Diagnostics
+
+- FR43: System can log events at configurable levels (debug, info, warn, error)
+- FR44: Operators can view human-readable error messages (no cryptic codes)
+- FR45: System can log connection state changes
+- FR46: System can log task execution errors
+
+### Configuration
+
+- FR47: Developers can define sources (Modbus devices) in YAML
+- FR48: Developers can define variables with source bindings in YAML
+- FR49: System can validate configuration on startup with clear error messages
+- FR50: System can report configuration errors before starting runtime
+
+### Deployment
+
+- FR51: System can compile to a single binary with embedded WebUI
+- FR52: System can run on Linux and Windows platforms
+- FR53: System can run as a systemd service on Linux
+
+## Non-Functional Requirements
+
+### Performance
+
+**Task Execution:**
+- NFR1: Task execution overhead must be <50µs per cycle
+- NFR2: Task scheduler must support scan rates from 10ms to 10s
+- NFR3: Variable read/write operations must complete within task cycle budget
+
+**API Response:**
+- NFR4: GraphQL query response time must be <10ms for variable reads
+- NFR5: GraphQL subscriptions must deliver updates within 100ms of value change
+- NFR6: OPC UA read operations must complete within 50ms
+
+**Resource Efficiency:**
+- NFR7: Memory usage must remain stable during 24+ hour operation (no memory leaks)
+- NFR8: CPU usage must remain <50% on target hardware during normal operation
+- NFR9: Single binary size must be <50MB (including embedded WebUI)
+
+### Reliability
+
+**Availability:**
+- NFR10: System must support 24/7 continuous operation
+- NFR11: System must recover from Modbus connection failures without operator intervention
+- NFR12: System must complete graceful shutdown within 5 seconds
+
+**Error Handling:**
+- NFR13: All errors must be logged with human-readable messages
+- NFR14: Connection failures must trigger automatic reconnection with exponential backoff
+- NFR15: Configuration errors must be reported at startup before runtime begins
+
+**Data Integrity:**
+- NFR16: Variable values must remain consistent across all protocols (Modbus, OPC UA, GraphQL)
+- NFR17: No data corruption on graceful shutdown
+
+### Security
+
+**MVP Security Posture (Trusted Network):**
+- NFR18: MVP assumes deployment in trusted, firewalled industrial network
+- NFR19: No authentication required for MVP (documented limitation)
+- NFR20: All network services bind to configurable interfaces (not hardcoded to 0.0.0.0)
+
+**Post-MVP Security (Documented for Future):**
+- Authentication and authorization deferred to Phase 2
+- TLS/encryption deferred to Phase 2
+- Security hardening guide to be included in documentation
+
+### Integration
+
+**Protocol Compliance:**
+- NFR21: Modbus TCP implementation must comply with Modbus Application Protocol Specification
+- NFR22: OPC UA server must be compatible with standard OPC UA clients (Ignition, Kepware)
+- NFR23: GraphQL API must follow GraphQL specification for queries and subscriptions
+
+**Interoperability:**
+- NFR24: System must successfully integrate with Ignition SCADA via OPC UA
+- NFR25: System must work with Python pymodbus simulator for testing
+- NFR26: WebUI must function in modern browsers (Chrome, Firefox, Edge - latest 2 versions)
+
+### Maintainability
+
+**Code Quality:**
+- NFR27: Code must follow standard Go formatting (gofmt)
+- NFR28: Code must pass go vet with no warnings
+- NFR29: Public APIs must have documentation comments
+
+**Deployment:**
+- NFR30: System must compile to single binary for Linux (amd64, arm64) and Windows (amd64)
+- NFR31: Configuration changes must not require recompilation
+- NFR32: Logs must support configurable output levels without restart
