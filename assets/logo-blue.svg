@@ -92,7 +92,7 @@
          cy="136.35982"
          r="4" /></g><text
        xml:space="preserve"
-       transform="matrix(2.5733522,0,0,2.5733522,-1353.6451,-876.00968)"
+       transform="matrix(2.5733522,0,0,2.5733522,-1353.6451,-874.42217)"
        id="text7"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.6767px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect7);display:inline;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.0971496;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"><tspan
          x="547"
@@ -104,11 +104,13 @@
          d="m 120.95761,70.5 1.17237,9.924969 -51.36544,-1.941125 5.98544,-33.570486 14.57323,-12.491341 h 24.72245 L 139.41249,51.5 l -10,19 h -19.3"
          id="path1" /><path
          style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none"
-         d="M 123.30718,53.534384 111.61249,63.955341 V 67.509 l 15.96577,-3.06e-4 5,-9.5 z"
+         d="m 123.30718,53.534384 -11.69469,10.421165 v 3.557226 l 15.96575,-4e-6 5,-9.504074 z"
          id="path3" /><path
          style="fill:#284b63;fill-opacity:1;stroke:#284b63;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
          d="m 137.98355,53.204683 -11.37709,0.03307 7.14375,7.309115 z"
-         id="path4" /><path
-         style="fill:#284b63;fill-opacity:1;stroke:#284b63;stroke-width:5.84703;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
-         id="path5"
-         d="m 111.01926,42.559208 a 5.8797874,2.3245668 0 0 1 -2.58219,1.924571 l -3.2976,-1.924571 z" /></g></g></svg>
+         id="path4" /><circle
+         style="fill:#ffffff;fill-opacity:1;stroke:#284b63;stroke-width:3;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+         id="path7-11"
+         cx="110.27313"
+         cy="43.65213"
+         r="4" /></g></g></svg>
