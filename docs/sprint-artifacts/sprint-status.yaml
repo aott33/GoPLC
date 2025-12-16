@@ -1,0 +1,305 @@
+# Sprint Status Tracking - go-plc
+# Generated: 2025-12-15
+# Project: go-plc
+# Tracking System: file-system
+# Story Location: docs/sprint-artifacts
+
+# ============================================================================
+# STATUS DEFINITIONS (for Human Developer)
+# ============================================================================
+#
+# EPIC STATUS:
+#   backlog      - Epic not yet started, no stories being worked
+#   in-progress  - At least one story is being actively developed
+#   done         - All stories in this epic are complete and verified
+#
+# STORY STATUS:
+#   backlog       - Story exists only in epics.md, no separate story file yet
+#   drafted       - Story file created in docs/sprint-artifacts/{story-id}.md
+#                   Contains detailed requirements, AC, and implementation notes
+#   ready-for-dev - Story reviewed, questions answered, context file created
+#                   Ready for you (Andy) to start implementation
+#   in-progress   - You're actively coding this story
+#   review        - Implementation complete, needs code review & testing
+#   done          - Story fully complete, merged, tested, verified
+#
+# RETROSPECTIVE STATUS:
+#   optional      - Can be done after epic completion (recommended)
+#   completed     - Lessons learned documented for future epics
+#
+# ============================================================================
+# WORKFLOW GUIDANCE (Hybrid AI + Human Developer)
+# ============================================================================
+#
+# RECOMMENDED WORKFLOW:
+#
+# 1. SM (Scrum Master AI) drafts next story → status becomes 'drafted'
+#    - Run: /bmad:bmm:workflows:create-story
+#    - Creates detailed story file with implementation guidance
+#
+# 2. Review story, ask questions, finalize → status becomes 'ready-for-dev'
+#    - Story context file created: {story-id}-context.md
+#    - All acceptance criteria clear and actionable
+#
+# 3. You (Andy) start implementation → status becomes 'in-progress'
+#    - Update this file manually when you begin work
+#    - Use /bmad:bmm:workflows:dev-story for AI-assisted development
+#
+# 4. Implementation complete → status becomes 'review'
+#    - Run /bmad:bmm:workflows:code-review for adversarial review
+#    - AI reviews your code for issues, patterns, test coverage
+#
+# 5. All issues resolved → status becomes 'done'
+#    - Update this file to mark complete
+#    - Proceed to next story (draft next or continue existing)
+#
+# TIPS FOR HUMAN DEVELOPER:
+# - Work stories in order within an epic (1.1 → 1.2 → 1.3...)
+# - Don't skip foundation stories - they build on each other
+# - Run retrospective after completing an epic to capture learnings
+# - Keep this file updated - it's your source of truth
+#
+# ============================================================================
+
+generated: 2025-12-15
+project: go-plc
+tracking_system: file-system
+story_location: docs/sprint-artifacts
+
+development_status:
+  # ==========================================================================
+  # EPIC 1: Project Foundation & Core Runtime
+  # ==========================================================================
+  # Goal: Initialize project, configure YAML, build PLC runtime with tasks
+  # FRs: FR1-FR11, FR38-FR50 (24 requirements)
+  # Estimated complexity: LARGE - foundational, sets patterns for entire project
+  # ==========================================================================
+
+  epic-1: in-progress
+
+  # Story 1.1: Project Initialization & Structure
+  # Create Go project with correct directory layout, module, Makefile
+  # Deliverables: cmd/, internal/, web/, tasks/ dirs, go.mod, Makefile
+  1-1-project-initialization-structure: ready-for-dev
+
+  # Story 1.2: Configuration Schema & Loading
+  # YAML config parsing with validation, type-discriminated sources
+  # Deliverables: internal/config/, config structs, validation, -config flag
+  1-2-configuration-schema-loading: backlog
+
+  # Story 1.3: Variable Store Implementation
+  # Thread-safe variable store with scaling support
+  # Deliverables: internal/variables/, sync.RWMutex map, scaling logic
+  1-3-variable-store-implementation: backlog
+
+  # Story 1.4: Logging Framework
+  # Structured logging with slog, configurable levels
+  # Deliverables: Logger setup, [Component] - [Description] format
+  1-4-logging-framework: backlog
+
+  # Story 1.5: Task Discovery & Registration
+  # Auto-discover Go tasks from /tasks folder
+  # Deliverables: internal/tasks/, Task interface, discovery logic
+  1-5-task-discovery-registration: backlog
+
+  # Story 1.6: Task Execution Runtime
+  # Execute tasks at scan rates with variable access
+  # Deliverables: Task scheduler, TaskContext, execution metrics
+  1-6-task-execution-runtime: backlog
+
+  # Story 1.7: PLC Runtime Coordinator
+  # Lifecycle management with start/stop and graceful shutdown
+  # Deliverables: internal/runtime/, signal handling, state machine
+  1-7-plc-runtime-coordinator: backlog
+
+  # Story 1.8: Example Task & Integration Test
+  # Reference implementation and end-to-end tests
+  # Deliverables: tasks/example_task.go, integration tests, make test
+  1-8-example-task-integration-test: backlog
+
+  epic-1-retrospective: optional
+
+  # ==========================================================================
+  # EPIC 2: Modbus I/O Integration
+  # ==========================================================================
+  # Goal: Connect to Modbus TCP devices, read/write registers, auto-reconnect
+  # FRs: FR12-FR19 (8 requirements)
+  # Estimated complexity: MEDIUM - protocol integration, error handling
+  # Dependencies: Epic 1 (variable store, config, runtime)
+  # ==========================================================================
+
+  epic-2: backlog
+
+  # Story 2.1: Modbus TCP Client Setup
+  # Connect to Modbus TCP using simonvetter/modbus library
+  # Deliverables: internal/modbus/, client wrapper, connection handling
+  2-1-modbus-tcp-client-setup: backlog
+
+  # Story 2.2: Register & Coil Read/Write Operations
+  # Read/write holding, input, coils, discrete inputs
+  # Deliverables: Register operations, data type support, write-through
+  2-2-register-coil-read-write-operations: backlog
+
+  # Story 2.3: Connection Manager with Automatic Reconnection
+  # Exponential backoff reconnection on failure
+  # Deliverables: Connection manager, state tracking, backoff logic
+  2-3-connection-manager-automatic-reconnection: backlog
+
+  # Story 2.4: Modbus Polling Loop
+  # Continuous polling at configured intervals
+  # Deliverables: Polling goroutine, batched reads, change notifications
+  2-4-modbus-polling-loop: backlog
+
+  # Story 2.5: Multiple Sources & Integration Test
+  # Multiple independent sources, pymodbus integration test
+  # Deliverables: Multi-source support, integration tests with simulator
+  2-5-multiple-sources-integration-test: backlog
+
+  epic-2-retrospective: optional
+
+  # ==========================================================================
+  # EPIC 3: GraphQL API & Real-Time Data
+  # ==========================================================================
+  # Goal: Query/mutate variables via GraphQL, real-time subscriptions
+  # FRs: FR25-FR30 (6 requirements)
+  # Estimated complexity: MEDIUM - gqlgen setup, WebSocket subscriptions
+  # Dependencies: Epic 1 (variable store, runtime)
+  # ==========================================================================
+
+  epic-3: backlog
+
+  # Story 3.1: GraphQL Schema & Server Setup
+  # HTTP server with /graphql endpoint, gqlgen schema
+  # Deliverables: internal/api/, schema.graphql, server setup
+  3-1-graphql-schema-server-setup: backlog
+
+  # Story 3.2: Query Resolvers
+  # Query variables, plcStatus, tasks, sources with filtering
+  # Deliverables: Query resolvers, filter support, response <10ms
+  3-2-query-resolvers: backlog
+
+  # Story 3.3: Variable Mutations
+  # SetVariable mutation with Modbus write-through
+  # Deliverables: Mutation resolvers, validation, error handling
+  3-3-variable-mutations: backlog
+
+  # Story 3.4: Real-Time Subscriptions
+  # WebSocket subscriptions for variable changes
+  # Deliverables: Subscription resolvers, filtering, <100ms delivery
+  3-4-real-time-subscriptions: backlog
+
+  # Story 3.5: GraphQL Playground & Testing
+  # Built-in playground UI, API test suite
+  # Deliverables: /playground endpoint, comprehensive API tests
+  3-5-graphql-playground-testing: backlog
+
+  epic-3-retrospective: optional
+
+  # ==========================================================================
+  # EPIC 4: WebUI Monitoring Dashboard
+  # ==========================================================================
+  # Goal: React dashboard for operators to monitor and control PLC
+  # FRs: FR31-FR37 (7 requirements)
+  # Estimated complexity: LARGE - full frontend, real-time updates
+  # Dependencies: Epic 3 (GraphQL API for data)
+  # ==========================================================================
+
+  epic-4: backlog
+
+  # Story 4.1: Frontend Project Setup
+  # Vite + React + TypeScript + Tailwind + shadcn/ui
+  # Deliverables: web/ project, design system, urql GraphQL client
+  4-1-frontend-project-setup: backlog
+
+  # Story 4.2: Layout & Navigation Components
+  # InfoBar, Sidebar, AlertsPanel shell components
+  # Deliverables: Layout components, navigation, responsive design
+  4-2-layout-navigation-components: backlog
+
+  # Story 4.3: Sources Panel
+  # Table showing source connections and status
+  # Deliverables: SourcesPanel, StatusDot, real-time status updates
+  4-3-sources-panel: backlog
+
+  # Story 4.4: Variables Panel
+  # Searchable variable table with real-time values
+  # Deliverables: VariablesPanel, search/filter, value change animation
+  4-4-variables-panel: backlog
+
+  # Story 4.5: Tasks Panel
+  # Task list with enable/disable controls
+  # Deliverables: TasksPanel, enable/disable mutations, status display
+  4-5-tasks-panel: backlog
+
+  # Story 4.6: PLC Runtime Controls
+  # Start/Stop PLC from WebUI
+  # Deliverables: PLC control buttons, confirmation dialog, state sync
+  4-6-plc-runtime-controls: backlog
+
+  # Story 4.7: Real-Time Updates & Integration
+  # WebSocket connection, live updates, production build
+  # Deliverables: Live indicator, subscription integration, pnpm build
+  4-7-real-time-updates-integration: backlog
+
+  epic-4-retrospective: optional
+
+  # ==========================================================================
+  # EPIC 5: OPC UA SCADA Integration
+  # ==========================================================================
+  # Goal: Expose variables via OPC UA for Ignition/Kepware integration
+  # FRs: FR20-FR24 (5 requirements)
+  # Estimated complexity: MEDIUM - gopcua library, node generation
+  # Dependencies: Epic 1 (variable store)
+  # ==========================================================================
+
+  epic-5: backlog
+
+  # Story 5.1: OPC UA Server Setup
+  # Initialize OPC UA server using gopcua/opcua
+  # Deliverables: internal/opcua/, server setup, configurable port
+  5-1-opc-ua-server-setup: backlog
+
+  # Story 5.2: Variable Node Generation
+  # Expose all variables as OPC UA nodes
+  # Deliverables: Node generation, address space, type mapping
+  5-2-variable-node-generation: backlog
+
+  # Story 5.3: Read/Write Handlers
+  # Handle OPC UA read/write requests
+  # Deliverables: Read/write handlers, monitored items, <50ms reads
+  5-3-read-write-handlers: backlog
+
+  # Story 5.4: Server Status & Integration Test
+  # Status reporting, Ignition/UaExpert integration test
+  # Deliverables: Status API, integration tests, SCADA verification
+  5-4-server-status-integration-test: backlog
+
+  epic-5-retrospective: optional
+
+  # ==========================================================================
+  # EPIC 6: Production Deployment & Documentation
+  # ==========================================================================
+  # Goal: Single binary builds, cross-platform, systemd service
+  # FRs: FR51-FR53 (3 requirements)
+  # Estimated complexity: SMALL - build tooling, deployment config
+  # Dependencies: Epics 1-5 (all features complete)
+  # ==========================================================================
+
+  epic-6: backlog
+
+  # Story 6.1: Single Binary Build with Embedded WebUI
+  # go:embed WebUI assets into binary
+  # Deliverables: Embedded assets, single binary, <50MB size
+  6-1-single-binary-build-embedded-webui: backlog
+
+  # Story 6.2: Cross-Platform Build Configuration
+  # Build for Linux amd64/arm64, Windows amd64
+  # Deliverables: Cross-compile config, platform-specific handling
+  6-2-cross-platform-build-configuration: backlog
+
+  # Story 6.3: systemd Service Configuration
+  # systemd unit file for Linux deployment
+  # Deliverables: go-plc.service, install docs, journald logging
+  6-3-systemd-service-configuration: backlog
+
+  epic-6-retrospective: optional
