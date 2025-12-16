@@ -1,4 +1,5 @@
 <img src="assets/logo-blue.svg" alt="GoPLC" width="150">
+__My first attempt at the logo, looks more like a seal. Will update when I have time__
 
 ![Status](https://img.shields.io/badge/status-planning-yellow)
 <!--
