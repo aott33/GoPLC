@@ -2,6 +2,8 @@
 
 _My first attempt at the logo, looks more like a seal. Will update when I have time_
 
+---
+
 ![Status](https://img.shields.io/badge/status-development-blue)
 <!--
 ![Status](https://img.shields.io/badge/status-planning-yellow)
