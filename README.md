@@ -61,4 +61,4 @@ The goal: leverage AI where it excels (structured documentation, planning, revie
 
 ## License
 
-MIT License - use and modify with attribution.
+O'Saasy License Agreement - MIT do-whatever-you-want license, but with the commercial rights for SaaS reserved for the copyright holder.
