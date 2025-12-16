@@ -59,10 +59,6 @@ This project uses a hybrid AI-assisted workflow:
 
 The goal: leverage AI where it excels (structured documentation, planning, review) while keeping implementation skills sharp through hands-on development.
 
-## Current Status
-
-**Planning stage.** PRD, UX design specifications, and architecture documentation are complete. Development begins soon.
-
 ## License
 
 MIT License - use and modify with attribution.
