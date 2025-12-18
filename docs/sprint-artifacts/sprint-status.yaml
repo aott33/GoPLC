@@ -80,7 +80,7 @@ development_status:
   # Story 1.1: Project Initialization & Structure
   # Create Go project with correct directory layout, module, Makefile
   # Deliverables: cmd/, internal/, web/, tasks/ dirs, go.mod, Makefile
-  1-1-project-initialization-structure: ready-for-dev
+  1-1-project-initialization-structure: done
 
   # Story 1.2: Configuration Schema & Loading
   # YAML config parsing with validation, type-discriminated sources

@@ -24,6 +24,12 @@ example*.env
 node_modules
 npm
 
+# Go build artifacts
+go-plc
+go-plc.exe
+*.exe
+build/
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
@@ -41,7 +47,7 @@ coverage.*
 profile.cov
 
 # Dependency directories (remove the comment below to include it)
-# vendor/
+ vendor/
 
 # Go workspace file
 go.work
@@ -51,5 +57,13 @@ go.work.sum
 .env
 
 # Editor/IDE
-# .idea/
-# .vscode/
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.vscode/settings.json
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,6 +1,6 @@
 # Story 1.1: Project Initialization & Structure
 
-**Status:** ready-for-dev
+**Status:** done
 **Epic:** 1 - Project Foundation & Core Runtime
 **Estimated Effort:** Small (1-2 hours)
 **Priority:** Critical Path - Must complete before all other stories
@@ -535,15 +535,15 @@ make clean
 ## Checklist Before Marking Complete
 
 - [x] Go 1.25.0 installed and verified (`go version`)
-- [ ] All directories created per the structure above
-- [ ] `go.mod` exists with module path and `go 1.25.0`
-- [ ] Each `internal/` package has a `doc.go` file
-- [ ] `cmd/go-plc/main.go` compiles and runs
-- [ ] `make build` produces a working binary
-- [ ] `make test` runs without errors
-- [ ] `.gitignore` updated with Go patterns
-- [ ] README breadcrumbs in `web/`, `tasks/`, `scripts/`
-- [ ] No binaries committed to git
+- [x] All directories created per the structure above
+- [x] `go.mod` exists with module path and `go 1.25.0`
+- [x] Each `internal/` package has a `doc.go` file
+- [x] `cmd/go-plc/main.go` compiles and runs
+- [x] `make build` produces a working binary
+- [x] `make test` runs without errors
+- [x] `.gitignore` updated with Go patterns
+- [x] README breadcrumbs in `web/`, `tasks/`, `scripts/`
+- [x] No binaries committed to git
 
 ---
 
@@ -655,12 +655,28 @@ This story implements the project structure defined in:
 
 ### Files Created
 
-_List all files created_
+- `go.mod` - Go module definition
+- `Makefile` - Build automation
+- `cmd/go-plc/main.go` - Application entry point
+- `internal/config/doc.go` - Config package placeholder
+- `internal/variables/doc.go` - Variables package placeholder
+- `internal/runtime/doc.go` - Runtime package placeholder
+- `internal/modbus/doc.go` - Modbus package placeholder
+- `internal/opcua/doc.go` - OPC UA package placeholder
+- `internal/sparkplug/doc.go` - Sparkplug package placeholder
+- `internal/api/doc.go` - API package placeholder
+- `internal/tasks/doc.go` - Tasks package placeholder
+- `web/README.md` - Frontend directory breadcrumb
+- `tasks/README.md` - User tasks directory breadcrumb
+- `scripts/README.md` - Scripts directory breadcrumb
 
 ### Deviations from Plan
 
-_Note any changes made during implementation and why_
+- **Branding:** Changed product name to "GoPLC" in logs and documentation (binary remains `go-plc`)
+- **Go version:** `go mod init` created go.mod with 1.24.5; updated to 1.25 via `go mod edit -go=1.25`
+- **main.go comments:** Simplified future work comments to be more concise
 
 ### Lessons Learned
 
-_Any insights for future stories_
+- Go mod init uses the currently installed Go version, not the latest - need to verify and update
+- Windows environment may not have `make` available natively; developers need bash/WSL or equivalent
