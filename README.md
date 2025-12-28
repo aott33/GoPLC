@@ -12,17 +12,21 @@ _My first attempt at the logo, looks more like a seal. Will update when I have t
 
 A soft PLC written in Go that replaces proprietary industrial programming languages with modern development tools.
 
-## What Problem Does This Solve?
+## Motivation
 
-Industrial automation tools are decades behind modern software development. Proprietary IDEs, vendor lock-in, slow iteration cycles, no version control. If you have to learn vendor-specific languages anyway, you might as well learn a real programming language that transfers to other domains.
+Industrial automation is stuck in the past. Proprietary IDEs, vendor lock-in, no real version control, and languages that don't transfer to any other domain. If you're going to learn something new anyway, why not use a real programming language with modern tooling? GoPLC lets you write control logic in native Go using VS Code, Git, and CI/CD pipelines instead of being locked into Ladder Logic or Structured Text. It's time to bring software development practices from the last two decades into industrial automation.
 
-GoPLC lets you write control logic in native Go using VS Code, Git, and CI/CD pipelines instead of Ladder Logic or Structured Text.
+## Quick Start
 
-## What is a Soft PLC?
+Coming soon. Installation and usage instructions will be added as the project develops.
+
+## Usage
+
+### What is a Soft PLC?
 
 A traditional PLC is a specialized industrial computer that runs control logic for manufacturing equipment. A soft PLC does the same thing but runs on standard hardware—the control software without the proprietary box.
 
-## Architecture Overview
+### Architecture Overview
 
 GoPLC communicates with industrial devices via standard protocols and exposes data through multiple interfaces:
 
@@ -41,9 +45,9 @@ GoPLC communicates with industrial devices via standard protocols and exposes da
 
 Variables are defined once in YAML and automatically exposed to all protocols. The runtime handles scheduling, scaling, and protocol translation.
 
-## Inspiration
+## Contributing
 
-This project is inspired by [Tentacle PLC](https://joyautomation.com/software/packages/tentacle), which proved that modern programming languages can replace IEC 61131-3 standards. GoPLC implements that philosophy in Go.
+Contributions are welcome. If you find a bug or have a feature request, please open an issue. If you want to submit code, please open a pull request with a clear description of your changes.
 
 ## Development Methodology
 
