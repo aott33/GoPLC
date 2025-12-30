@@ -45,7 +45,7 @@ date: '2025-12-13'
 
 5. **AI-native development** - Simple text-based configuration (YAML), code that AI models can actually read and generate (unlike vendor-specific graphical languages), potential MCP integration for AI-assisted development
 
-6. **Open and vendor-neutral** - All standard protocols (Modbus, OPC UA, Sparkplug B, GraphQL), no proprietary lock-in, true portability across Linux/Windows
+6. **Open and vendor-neutral** - All standard protocols (Modbus, OPC UA, Zenoh, GraphQL), no proprietary lock-in, true portability across Linux/Windows
 
 **Inspiration:** Inspired by James Joy's Tentacle PLC and the philosophy of abandoning IEC 61131-3 in favor of modern programming languages and tooling.
 
@@ -180,7 +180,7 @@ If the developer would choose go-plc over CompactLogix for commissioning a real 
 ### Growth Features (Phase 2 - Post-MVP)
 
 **Protocol Expansion:**
-- **Sparkplug B** - MQTT publisher implementation using paho.mqtt.golang with Sparkplug B protobuf encoding (NBIRTH/NDATA/NDEATH messages) for Ignition cloud and MQTT-based SCADA integration
+- **Zenoh Protocol** - High-performance pub/sub implementation using zenoh-go bindings for advanced SCADA integration (900+ channels @ 100Hz capability), geo-distributed storage, query/reply patterns, and peer-to-peer communication without requiring message broker infrastructure
 - **Ethernet/IP** - Allen-Bradley ecosystem connectivity enabling:
   - VFDs (PowerFlex series)
   - Remote I/O (Point I/O, Flex I/O)
@@ -241,13 +241,13 @@ Late one Friday, frustrated after another slow iteration cycle on a different pr
 
 Saturday morning, Marcus installs Go and go-plc following the Docusaurus docs. Within 25 minutes, he has a simple control task running - reading Modbus values from a Python simulator and controlling a virtual pump. He's shocked. He makes a logic change, rebuilds, and sees it running 45 seconds later. No proprietary IDE. No licensing dongles. Just his favorite VS Code editor and a terminal.
 
-The breakthrough comes when he implements the tank battery logic in Go. The code is clear, version-controlled in Git, and he can iterate on control strategies in minutes instead of hours. When he connects Ignition SCADA via Sparkplug B and sees real-time data flowing, he realizes he's found what he's been looking for. Two weeks later, the new site comes online with go-plc running the tank battery, and Marcus has a modern, maintainable control system that he can troubleshoot and update from anywhere with Git access.
+The breakthrough comes when he implements the tank battery logic in Go. The code is clear, version-controlled in Git, and he can iterate on control strategies in minutes instead of hours. When he connects Ignition SCADA via OPC UA and sees real-time data flowing, he realizes he's found what he's been looking for. Two weeks later, the new site comes online with go-plc running the tank battery, and Marcus has a modern, maintainable control system that he can troubleshoot and update from anywhere with Git access.
 
 **This journey reveals requirements for:**
 - Clear installation and quickstart documentation
 - Go task development with simple variable access API
 - Modbus I/O integration with simulator support for testing
-- SCADA integration via Sparkplug B and OPC UA
+- SCADA integration via OPC UA (with optional Zenoh for advanced use cases)
 - Fast build and deployment workflow (<1 minute iteration)
 - Git-friendly project structure (text-based configuration)
 - Tank battery reference implementation as example
@@ -299,7 +299,7 @@ The client mentions their controls engineer (Marcus) has been piloting go-plc an
 
 David downloads go-plc and reads through the Docusaurus deployment guide. He's pleasantly surprised - there's a complete section on Linux device configuration for real-time performance, SCADA integration examples, and even a tank battery reference implementation that matches exactly what he needs to deploy.
 
-At the first site, he installs go-plc on an industrial Linux edge device, copies the tank battery configuration YAML, adjusts the Modbus addresses for the local I/O, and starts the service. Within 2 hours, the PLC is running. He configures the Sparkplug B settings to point to the client's MQTT broker, and data starts flowing into Ignition immediately.
+At the first site, he installs go-plc on an industrial Linux edge device, copies the tank battery configuration YAML, adjusts the Modbus addresses for the local I/O, and starts the service. Within 2 hours, the PLC is running. He configures the OPC UA server settings, and Ignition connects immediately to start pulling real-time data.
 
 The breakthrough moment comes when the client requests a logic change during commissioning. David opens the Go task file, makes the adjustment, rebuilds the binary, and restarts the service. Total time: 3 minutes. With a traditional PLC, this would have meant opening a proprietary IDE, connecting remotely, downloading the program, and testing - easily 30 minutes.
 
@@ -308,7 +308,7 @@ By week 4, all three sites are commissioned and running. David finishes two week
 **This journey reveals requirements for:**
 - Linux deployment documentation (installation, configuration, service setup)
 - Real-time performance tuning guide for Linux
-- SCADA integration configuration examples (Sparkplug B, OPC UA)
+- SCADA integration configuration examples (OPC UA, with optional Zenoh for advanced scenarios)
 - Reusable configuration templates (tank battery example)
 - Single binary deployment (no complex dependencies)
 - Fast rebuild and restart workflow for field changes
@@ -321,23 +321,23 @@ Andy is completing his Boot.dev capstone project and wants to build something th
 
 He has an existing CompactLogix tank battery program from a previous project - real production code with tank level monitoring, pump sequencing, and alarm logic. This becomes his validation case: if he can recreate this in go-plc and it's actually better, the project succeeds.
 
-Andy starts by researching existing Go libraries to accelerate development. He finds `simonvetter/modbus` for Modbus TCP, `gopcua/opcua` for OPC UA server capabilities, and `eclipse-paho/paho.mqtt.golang` as the foundation for Sparkplug B (which he'll extend with Sparkplug B protobuf encoding and message patterns). Standing on the shoulders of these existing libraries means he can focus on the core PLC runtime architecture and Sparkplug B implementation rather than reinventing low-level protocol handling.
+Andy starts by researching existing Go libraries to accelerate development. He finds `simonvetter/modbus` for Modbus TCP and `gopcua/opcua` for OPC UA server capabilities. For advanced protocol support in Phase 2, he discovers Zenoh - a next-generation pub/sub protocol with demonstrated 900+ channels @ 100Hz performance on edge devices. He plans to contribute to the `zenoh-go` bindings, building both his portfolio and the open-source ecosystem. Standing on the shoulders of these existing libraries means he can focus on the core PLC runtime architecture rather than reinventing low-level protocol handling.
 
-He builds the project structure, integrating these libraries into a cohesive runtime. The YAML configuration system comes next - he wants users to define variables once and have them auto-expose to all protocols (Modbus, OPC UA, Sparkplug B, GraphQL).
+He builds the project structure, integrating these libraries into a cohesive runtime. The YAML configuration system comes next - he wants users to define variables once and have them auto-expose to all protocols (Modbus, OPC UA, GraphQL, and eventually Zenoh).
 
 The critical moment comes when he uses AI to analyze his CompactLogix program and help translate the logic into Go tasks. The AI understands the control patterns and generates clean Go code. Andy refines it, adds proper error handling, and implements the tank battery logic. When he runs it for the first time and sees the same control behavior as the CompactLogix version - but with faster iteration cycles and readable code - he knows he's onto something.
 
 He spends significant time on documentation, creating a comprehensive Docusaurus site. He wants someone like Marcus (the automation engineer from Journey 1) to be able to adopt go-plc without Andy having to personally onboard them. Installation guides, configuration examples, the tank battery walkthrough, performance benchmarks - all documented thoroughly.
 
-When Andy deploys the final system, integrates it with Ignition SCADA via both OPC UA and Sparkplug B, and validates the performance metrics (<50µs task execution, <10ms API response), he has his answer to the ultimate question: "Would I use this in a real control project?"
+When Andy deploys the final system, integrates it with Ignition SCADA via OPC UA, and validates the performance metrics (<50µs task execution, <10ms API response), he has his answer to the ultimate question: "Would I use this in a real control project?"
 
 Yes. Absolutely yes.
 
 He submits his capstone with confidence - not just because it demonstrates Go skills, concurrency, real-time systems, and protocol integration - but because he's built something he'd actually recommend to other engineers.
 
 **This journey reveals requirements for:**
-- Integration with existing Go libraries (simonvetter/modbus, gopcua/opcua, paho.mqtt.golang)
-- Sparkplug B protocol implementation (protobuf encoding, NBIRTH/NDATA/NDEATH messages)
+- Integration with existing Go libraries (simonvetter/modbus, gopcua/opcua)
+- Optional Zenoh protocol integration for Phase 2 (high-performance pub/sub with zenoh-go contribution)
 - YAML configuration system with single-definition principle
 - AI-friendly code structure for migration assistance
 - Performance validation framework (benchmarking <50µs, <10ms targets)
@@ -358,8 +358,8 @@ He submits his capstone with confidence - not just because it demonstrates Go sk
 **Protocol Integration:**
 - Modbus TCP client (using simonvetter/modbus library)
 - OPC UA server (using gopcua/opcua library)
-- Sparkplug B MQTT publisher (using paho.mqtt.golang with custom Sparkplug B encoding)
 - GraphQL API with queries and subscriptions
+- Optional Zenoh pub/sub (Phase 2 - using zenoh-go bindings for high-performance scenarios)
 
 **Monitoring and Operations:**
 - WebUI showing real-time status (tags, connections, task execution)
@@ -374,7 +374,7 @@ He submits his capstone with confidence - not just because it demonstrates Go sk
   - Linux device configuration for real-time performance
   - Task programming guide (Go code examples)
   - YAML configuration reference
-  - Protocol integration guides (Modbus, OPC UA, Sparkplug B, GraphQL)
+  - Protocol integration guides (Modbus, OPC UA, GraphQL, optional Zenoh)
   - Tank battery reference implementation walkthrough
   - Performance benchmark methodology
   - Troubleshooting and diagnostics guide
@@ -401,11 +401,11 @@ Building on Tentacle's proven approach of using modern languages, go-plc explore
 
 1. **Native Compiled Approach** - Pure Go compilation (no runtime engine overhead) for predictable performance, real-time capability, and single binary deployment
 
-2. **YAML Single-Definition Principle** - Define variables once in YAML, automatically expose to all protocols (Modbus, OPC UA, Sparkplug B, GraphQL) - eliminating duplicate definitions across systems
+2. **YAML Single-Definition Principle** - Define variables once in YAML, automatically expose to all protocols (Modbus, OPC UA, GraphQL, Zenoh) - eliminating duplicate definitions across systems
 
 3. **AI-Assisted Migration** - Leveraging AI to analyze existing PLC programs (CompactLogix, etc.) and translate logic into clean Go code, making migration from proprietary systems accessible
 
-4. **Comprehensive Protocol Integration** - All industrial protocols in one platform (Modbus TCP, OPC UA, Sparkplug B, GraphQL) without vendor lock-in or complex gateway hardware
+4. **Comprehensive Protocol Integration** - All industrial protocols in one platform (Modbus TCP, OPC UA, GraphQL, optional Zenoh) without vendor lock-in or complex gateway hardware
 
 5. **Developer Experience as Product** - Git version control, modern IDEs, CI/CD pipelines, and comprehensive documentation make industrial automation accessible to the broader software development community
 
@@ -435,7 +435,7 @@ The innovation will be validated through a real-world test case:
 2. **AI-Assisted Translation:** Use AI to analyze Rockwell logic and generate equivalent Go code
 3. **Functional Equivalence:** go-plc implementation must control tank battery identically to CompactLogix version
 4. **Performance Validation:** Achieve <50µs task execution overhead and <10ms API response times
-5. **Integration Validation:** Successfully integrate with Ignition SCADA via both OPC UA and Sparkplug B
+5. **Integration Validation:** Successfully integrate with Ignition SCADA via OPC UA
 
 **Success Criteria:**
 
@@ -480,12 +480,12 @@ Then the innovation succeeds.
 
 **Innovation Risk: Protocol Complexity**
 
-**Risk:** Implementing OPC UA, Sparkplug B, Modbus, GraphQL might exceed 50-hour timeline.
+**Risk:** Implementing OPC UA, Modbus, GraphQL might exceed 50-hour timeline.
 
 **Mitigation:**
-- **Leverage Existing Libraries:** simonvetter/modbus, gopcua/opcua, paho.mqtt.golang
-- **Incremental Protocol Support:** Start with Modbus + one SCADA protocol (Sparkplug B or OPC UA), add second if time permits
-- **Clear MVP Scope:** Working tank battery with minimum viable protocol integration proves concept
+- **Leverage Existing Libraries:** simonvetter/modbus, gopcua/opcua
+- **Clear MVP Scope:** Working tank battery with Modbus + OPC UA + GraphQL proves concept
+- **Phase 2 Advanced Protocols:** Zenoh integration deferred to post-MVP for advanced performance scenarios
 
 **The Ultimate Fallback:**
 
@@ -535,9 +535,9 @@ go-plc is designed as an industrial IoT/embedded application optimized for edge 
 - Configurable polling intervals per source (default 100ms)
 
 **SCADA Integration:**
-- **OPC UA Server** - gopcua/opcua library for standard industrial SCADA connectivity
-- **Sparkplug B** - paho.mqtt.golang with custom Sparkplug B encoding for Ignition/cloud integration
-- Variables automatically exposed to both protocols via single YAML definition
+- **OPC UA Server** - gopcua/opcua library for standard industrial SCADA connectivity (Ignition, Kepware, etc.)
+- **Optional Zenoh (Phase 2)** - zenoh-go bindings for high-performance pub/sub, geo-distributed storage, and query/reply patterns
+- Variables automatically exposed to all protocols via single YAML definition
 
 **Modern Integration:**
 - **GraphQL API** - gqlgen-based API with queries and subscriptions for web/app integration

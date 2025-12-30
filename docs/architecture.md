@@ -59,8 +59,8 @@ Critical NFRs driving architectural decisions:
 **External Library Dependencies:**
 - `simonvetter/modbus` - Modbus TCP client (mandated in PRD)
 - `gopcua/opcua` - OPC UA server implementation (mandated in PRD)
-- `eclipse-paho/paho.mqtt.golang` - MQTT foundation for Sparkplug B (mandated in PRD)
 - `gqlgen` - GraphQL server with subscription support
+- `zenoh-go` - Optional Phase 2: Zenoh protocol bindings for high-performance pub/sub (community contribution opportunity)
 
 **Deployment Platform:**
 - **Target:** Real-time Linux OS (PREEMPT_RT kernel recommended)
@@ -146,7 +146,7 @@ go-plc/
 │   ├── variables/               # Variable store, scaling engine
 │   ├── modbus/                  # Modbus TCP client
 │   ├── opcua/                   # OPC UA server
-│   ├── sparkplug/               # Sparkplug B MQTT
+│   ├── zenoh/                   # Optional Phase 2: Zenoh protocol integration
 │   ├── api/                     # GraphQL server
 │   └── tasks/                   # Task discovery, execution
 ├── web/                         # React frontend (embedded at build)
@@ -587,11 +587,11 @@ go-plc/
 │   │   ├── nodes.go                   # Node generation from variables
 │   │   ├── handlers.go                # Read/write handlers
 │   │   └── server_test.go
-│   ├── sparkplug/
-│   │   ├── client.go                  # Sparkplug B client
-│   │   ├── messages.go                # NBIRTH/NDATA/NDEATH encoding
-│   │   ├── metrics.go                 # Metric conversion
-│   │   └── client_test.go
+│   ├── zenoh/                   # Optional Phase 2: Zenoh protocol
+│   │   ├── session.go                 # Zenoh session management
+│   │   ├── publisher.go               # Pub/sub implementation
+│   │   ├── queryable.go               # Query/reply handlers
+│   │   └── session_test.go
 │   ├── api/
 │   │   ├── server.go                  # HTTP/WebSocket server
 │   │   ├── schema.graphql             # GraphQL schema definition
@@ -651,7 +651,7 @@ go-plc/
 │   │   ├── protocols/
 │   │   │   ├── modbus.md              # Modbus configuration
 │   │   │   ├── opcua.md               # OPC UA server details
-│   │   │   └── sparkplug.md           # Sparkplug B setup
+│   │   │   └── zenoh.md               # Zenoh protocol setup (Phase 2)
 │   │   └── api/
 │   │       └── graphql.md             # GraphQL API reference
 │   ├── blog/                          # Optional: Release notes, updates
@@ -687,7 +687,7 @@ go-plc/
 |----------|----------|----------|
 | GraphQL API | `internal/api/` | HTTP + WebSocket (port 8080) |
 | OPC UA Server | `internal/opcua/` | OPC UA (port 4840) |
-| Sparkplug B | `internal/sparkplug/` | MQTT (configurable broker) |
+| Zenoh (Phase 2) | `internal/zenoh/` | Zenoh pub/sub (peer-to-peer or router) |
 | Embedded WebUI | `internal/api/server.go` | HTTP static serving |
 
 **Component Boundaries:**
@@ -724,8 +724,8 @@ go-plc/
          │                    │                    │
          ▼                    ▼                    ▼
 ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
-│ internal/opcua  │  │internal/sparkplug│ │ internal/api    │
-│   (OPC UA Out)  │  │   (MQTT Out)    │  │ (Subscriptions) │
+│ internal/opcua  │  │ internal/zenoh  │  │ internal/api    │
+│   (OPC UA Out)  │  │  (Zenoh Phase2) │  │ (Subscriptions) │
 └─────────────────┘  └─────────────────┘  └─────────────────┘
 ```
 
@@ -735,7 +735,7 @@ go-plc/
 3. Variable Store notifies subscribers via channel
 4. GraphQL subscriptions broadcast changes to WebUI
 5. OPC UA server reads from Variable Store on client request
-6. Sparkplug B publishes NDATA on variable changes
+6. Zenoh (Phase 2) publishes variable changes to network
 7. Tasks execute at scan rate → Read/Write Variable Store
 
 ### Requirements to Structure Mapping
@@ -777,8 +777,8 @@ go-plc/
 | Integration | Package | External System |
 |-------------|---------|-----------------|
 | Modbus TCP/RTU | `internal/modbus/` | Industrial devices |
-| MQTT Broker | `internal/sparkplug/` | Sparkplug B infrastructure |
-| OPC UA Clients | `internal/opcua/` | SCADA systems |
+| OPC UA Clients | `internal/opcua/` | SCADA systems (Ignition, Kepware) |
+| Zenoh Network (Phase 2) | `internal/zenoh/` | Zenoh routers, peers, storage nodes |
 | Web Browsers | `internal/api/` | WebUI via GraphQL |
 
 ### Documentation Site Structure
@@ -796,7 +796,7 @@ npx create-docusaurus@latest . classic --typescript
 | Getting Started | `docs/intro.md`, `docs/installation.md` | Quick start, prerequisites, first run |
 | Configuration | `docs/configuration/` | YAML schema reference, examples |
 | Task Development | `docs/tasks/` | Writing tasks, variable API, examples |
-| Protocols | `docs/protocols/` | Modbus, OPC UA, Sparkplug B setup |
+| Protocols | `docs/protocols/` | Modbus, OPC UA, GraphQL, Zenoh (Phase 2) |
 | API Reference | `docs/api/` | GraphQL schema, WebSocket subscriptions |
 
 ### File Organization Patterns
@@ -916,12 +916,14 @@ All critical NFRs are architecturally addressed:
 
 **Important Gaps (resolved during implementation):**
 - Task API details → Defined during `internal/tasks/` implementation
-- Sparkplug B timing → Follows standard spec
+- Zenoh integration patterns → To be defined in Phase 2 based on zenoh-go maturity
 
 **Future Enhancement Opportunities:**
 - Config hot-reload
 - OPC UA write-through
 - Task hot-reload
+- Zenoh geo-distributed storage integration
+- Zenoh query/reply patterns for remote task control
 
 ### Architecture Completeness Checklist
 
@@ -1020,7 +1022,7 @@ This architecture document is your complete guide for implementing go-plc. Follo
 go mod init github.com/[username]/go-plc
 
 # 2. Create directory structure
-mkdir -p cmd/go-plc internal/{config,variables,runtime,modbus,opcua,sparkplug,api,tasks} web tasks scripts docs-site
+mkdir -p cmd/go-plc internal/{config,variables,runtime,modbus,opcua,zenoh,api,tasks} web tasks scripts docs-site
 
 # 3. Initialize frontend
 cd web && pnpm create vite@latest . --template react-ts

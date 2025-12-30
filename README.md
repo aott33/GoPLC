@@ -35,9 +35,9 @@ GoPLC communicates with industrial devices via standard protocols and exposes da
 - Automatic reconnection with exponential backoff
 
 **SCADA Integration:**
-- OPC UA server for traditional industrial SCADA systems
-- Sparkplug B over MQTT for modern IIoT architectures
-- GraphQL API for custom integrations
+- OPC UA server for traditional industrial SCADA systems (Ignition, Kepware, etc.)
+- GraphQL API for modern web/mobile integrations
+- Optional Zenoh protocol for high-performance pub/sub (Phase 2)
 
 **Monitoring:**
 - Built-in WebUI for real-time monitoring and control
