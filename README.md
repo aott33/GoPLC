@@ -1,6 +1,4 @@
-<img src="assets/logo-graphite.svg" alt="GoPLC" width="150">
-
-_My first attempt at the logo, looks more like a seal. Will update when I have time._
+<img src="assets/logo.svg" alt="GoPLC" height="150">
 
 ---
 
