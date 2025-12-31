@@ -3,11 +3,7 @@
 </p>
 
 <p align="center">
-    ![Status](https://img.shields.io/badge/status-development-blue)
-    <!--
-    ![Status](https://img.shields.io/badge/status-planning-yellow)
-    ![Status](https://img.shields.io/badge/status-release%20v1.0.0-green)
-    -->
+    <img src="https://img.shields.io/badge/status-development-blue" alt="Status">
 </p>
 
 # GoPLC
