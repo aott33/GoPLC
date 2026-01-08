@@ -70,15 +70,30 @@ The entry point (`cmd/go-plc/main.go`) already has slog configured with JSON out
 
 ---
 
+## Sprint Change Proposal
+
+**IMPORTANT:** This story's implementation approach has been enhanced by [Sprint Change Proposal 2025-12-20](../sprint-change-proposal-2025-12-20.md).
+
+**Key Changes:**
+1. **YAML Library:** Use `github.com/goccy/go-yaml` instead of `gopkg.in/yaml.v3`
+2. **Architecture Pattern:** Implement registry pattern for protocol-specific source configs
+3. **Package Structure:** Protocol configs live in `internal/source/modbus/` instead of `internal/config/`
+
+**Implementation Guide:** Follow Section 4 of the sprint change proposal for complete technical specifications, code examples, and file structure.
+
+**Why This Matters:** The registry pattern eliminates tight coupling and enables future protocol additions (OPC-UA, MQTT, EtherNet/IP) without modifying core config code.
+
+---
+
 ## Technical Requirements
 
 ### Architecture Compliance
 
-You MUST follow these patterns from the architecture document:
+You MUST follow these patterns from the architecture document AND the sprint change proposal:
 
 **Naming Conventions:**
-- Package name: `config` (lowercase, single word)
-- File names: `config.go`, `loader.go`, `types.go`, `config_test.go`
+- Package names: `config`, `source` (lowercase, single word)
+- File names: `config.go`, `loader.go`, `config_test.go`, `registry.go`, `tcp.go`, `rtu.go`
 - Exported types: `PascalCase` (e.g., `Config`, `Source`, `Variable`)
 - Unexported: `camelCase` (e.g., `validateSources`, `loadFile`)
 - JSON/YAML tags: `camelCase` (e.g., `json:"pollInterval"` NOT `json:"poll_interval"`)
@@ -184,46 +199,57 @@ From the simonvetter/modbus library - you'll need these for validation:
 
 ## Implementation Guide
 
-### Step 1: Create the Configuration Types
+**CRITICAL:** Follow the complete implementation guide in [Sprint Change Proposal - Section 4](../sprint-change-proposal-2025-12-20.md#4-technical-specification-for-human-developer). The sections below provide high-level context, but Section 4 of the proposal contains the authoritative code examples and structure.
 
-**Location:** `internal/config/types.go`
+### Step 1: Create the Source Registry Pattern
+
+**Locations:**
+- `internal/source/source.go` - Interface definitions
+- `internal/source/registry.go` - Registry implementation
+- `internal/source/modbus/tcp.go` - Modbus TCP config
+- `internal/source/modbus/rtu.go` - Modbus RTU config
+- `internal/source/modbus/duration.go` - Duration helper
+
+**What to implement:**
+
+1. **Define Source Interfaces** (`internal/source/source.go`):
+   - `Source` interface (Name(), Type() methods - full interface in Epic 2)
+   - `SourceConfig` interface (Validate(), SourceType(), SourceName() methods)
+   - `SourceFactory` type (function signature for creating configs from YAML)
+
+2. **Implement the Registry** (`internal/source/registry.go`):
+   - Global registry map with mutex protection
+   - `Register(typeName string, factory SourceFactory)` - Called from protocol init() functions
+   - `ParseConfig(typeName, name string, configNode yaml.Node)` - Looks up factory and parses config
+   - `RegisteredTypes()` - Returns list of registered types for error messages
+
+3. **Implement Modbus Protocol Configs** (`internal/source/modbus/tcp.go` and `rtu.go`):
+   - Each file implements the config struct, Validate() method, and factory function
+   - Each file has an `init()` function that calls `source.Register()`
+   - See proposal Section 4.4 and 4.5 for complete code
+
+4. **Create Duration Helper** (`internal/source/modbus/duration.go`):
+   - Wraps `time.Duration` for YAML unmarshaling
+   - Parses strings like "100ms", "5s" into `time.Duration`
+   - See proposal Section 4.6 for complete code
+
+### Step 2: Create Core Configuration Types
+
+**Location:** `internal/config/config.go`
 
 **What to implement:**
 
 1. **Create the root Config struct** containing:
    - `LogLevel` field (string with validation for debug/info/warn/error)
-   - `Sources` slice
+   - `Sources` slice (holds `Source` structs with `source.SourceConfig` interface)
    - `Variables` slice
 
-2. **Implement the type-discriminated Source struct** using Go's type embedding or interface pattern:
-   - Think about how to handle different protocol configs (modbus-tcp vs modbus-rtu)
-   - Option A: Use `map[string]interface{}` for the config block and type-assert based on `Type`
-   - Option B: Use embedded structs with yaml unmarshaling hooks
-   - Option C: Define separate structs and use a custom UnmarshalYAML method
+2. **Create Source struct:**
+   - `Name` (string)
+   - `Type` (string)
+   - `Config` (source.SourceConfig interface - holds protocol-specific config)
 
-   **Guidance:** Option C (custom UnmarshalYAML) is cleanest for type safety. Your Source struct should hold the protocol-specific config in a typed struct after unmarshaling.
-
-3. **Create ModbusTCPConfig struct** with fields:
-   - `Host` (string, required)
-   - `Port` (int, default 502)
-   - `UnitId` (uint8, default 1)
-   - `Timeout` (time.Duration, default 1s)
-   - `PollInterval` (time.Duration, default 100ms)
-   - `RetryInterval` (time.Duration, default 5s)
-   - `ByteOrder` (string: "big-endian" or "little-endian")
-   - `WordOrder` (string: "high-word-first" or "low-word-first")
-
-4. **Create ModbusRTUConfig struct** with fields:
-   - `Device` (string, required - e.g., "/dev/ttyUSB0")
-   - `BaudRate` (int, required)
-   - `DataBits` (int, default 8)
-   - `Parity` (string: "none", "even", "odd")
-   - `StopBits` (int, default 1)
-   - `UnitId` (uint8, default 1)
-   - `Timeout` (time.Duration)
-   - `PollInterval` (time.Duration)
-
-5. **Create Variable struct** with fields:
+3. **Create Variable struct** with fields:
    - `Name` (string, required, unique)
    - `Source` (string, required - must reference existing source)
    - `Register` (RegisterConfig)
@@ -231,252 +257,168 @@ From the simonvetter/modbus library - you'll need these for validation:
    - `Scale` (optional *ScaleConfig)
    - `Tags` ([]string, optional)
 
-6. **Create RegisterConfig struct:**
+4. **Create RegisterConfig struct:**
    - `Type` (string: "holding", "input", "coil", "discrete")
    - `Address` (uint16 - 0-based offset)
 
-7. **Create ScaleConfig struct:**
+5. **Create ScaleConfig struct:**
    - `RawMin`, `RawMax`, `EngMin`, `EngMax` (float64)
    - `Unit` (string - display unit like "%", "PSI", "degC")
 
-**Key Decision Point:**
-How will you validate that `bool` dataType is only used with `coil` or `discrete` register types? Consider building a validation map or switch statement.
+6. **Implement Config.Validate() method:**
+   - Validates all sources by calling their `Config.Validate()` methods
+   - Validates variables (see Section 4.8 in proposal for complete logic)
+   - Collects ALL errors before returning
 
-### Step 2: Implement the Configuration Loader
+See proposal Section 4.8 for complete code example.
+
+### Step 3: Implement the Configuration Loader
 
 **Location:** `internal/config/loader.go`
 
 **What to implement:**
 
-1. **Create a Load function** with signature:
-   ```go
-   func Load(path string) (*Config, error)
-   ```
+1. **Create rawSource and rawConfig structs** for initial YAML parsing:
+   - `rawSource` has Name, Type, and `Config yaml.Node` (deferred parsing)
+   - `rawConfig` has LogLevel, Sources slice, Variables slice
 
-2. **File reading and YAML parsing:**
-   - Use `os.ReadFile` to read the config file
-   - Use `gopkg.in/yaml.v3` for YAML parsing (add to go.mod)
-   - Handle file-not-found with clear error message
+2. **Implement Load function**:
+   - Read file with `os.ReadFile`
+   - Unmarshal into `rawConfig` using `github.com/goccy/go-yaml`
+   - For each rawSource, call `source.ParseConfig()` to get typed config
+   - Build final `Config` struct with typed sources
+   - Call `cfg.Validate()` before returning
 
-3. **Implement custom UnmarshalYAML** for the Source struct:
-   - First unmarshal to get the `type` field
-   - Based on type, unmarshal the `config` block into the appropriate struct
-   - Store the typed config in the Source struct
+3. **Default value application:**
+   - LogLevel defaults to "info" if not specified
+   - Protocol-specific defaults are applied in each protocol's Validate() method
 
-   **Hint:** You might need an intermediate struct like:
-   ```go
-   type rawSource struct {
-       Name   string
-       Type   string
-       Config yaml.Node  // Delay parsing until we know the type
-   }
-   ```
+See proposal Section 4.7 for complete implementation with error handling.
 
-4. **Apply default values** after unmarshaling:
-   - Modbus TCP port defaults to 502
-   - UnitId defaults to 1
-   - Timeout defaults to 1s
-   - PollInterval defaults to 100ms
-   - RetryInterval defaults to 5s
+### Step 4: Validation (Already in Config.Validate())
 
-### Step 3: Implement Validation
+**Location:** `internal/config/config.go` (within the Validate() method)
 
-**Location:** `internal/config/loader.go` (or separate `validation.go`)
+Validation is implemented in the `Config.Validate()` method (see Step 2). The key rules are:
 
-**Validation rules to implement:**
+1. **Source validation:** Delegated to each protocol's `SourceConfig.Validate()` method
+2. **Variable validation:** Implemented in helper functions (see proposal Section 4.8)
+3. **Error collection:** ALL errors are collected before returning
 
-1. **Source validation:**
-   - Name must be non-empty and unique across all sources
-   - Type must be "modbus-tcp" or "modbus-rtu"
-   - For modbus-tcp: host is required
-   - For modbus-rtu: device and baudRate are required
-   - ByteOrder must be "big-endian" or "little-endian" (default big-endian)
-   - WordOrder must be "high-word-first" or "low-word-first" (default high-word-first)
+**Important:** Protocol-specific validation (like checking required fields) happens in each protocol package's Validate() method. The config package only validates cross-cutting concerns like duplicate names and variable-to-source references.
 
-2. **Variable validation:**
-   - Name must be non-empty and unique across all variables
-   - Source must reference an existing source name
-   - DataType must be one of the supported types
-   - Register type must be valid ("holding", "input", "coil", "discrete")
-   - Boolean dataType can only be used with "coil" or "discrete" registers
-   - Multi-register types (uint32, float32, etc.) should only be used with "holding" or "input"
-
-3. **Scaling validation (if present):**
-   - rawMin < rawMax
-   - engMin and engMax must be set if any scaling field is set
-
-4. **LogLevel validation:**
-   - Must be "debug", "info", "warn", or "error"
-   - Default to "info" if not specified
-
-**Error reporting guidance:**
-Create a validation function that collects ALL errors, not just the first one. Return a multi-error so the user can fix all problems at once. Consider using a pattern like:
-
-```go
-var errors []error
-// ... validation checks that append to errors
-if len(errors) > 0 {
-    return combineErrors(errors)
-}
-```
-
-### Step 4: Integrate with Main Application
+### Step 5: Integrate with Main Application
 
 **Location:** `cmd/go-plc/main.go`
 
-**Current State:** The existing main.go already initializes slog with JSON output. You'll be adding to this file, not replacing it.
-
 **What to implement:**
 
-1. **Add command-line flag parsing:**
-   - Add `-config` flag for config file path
-   - Use Go's standard `flag` package (no external dependencies)
-   - Example: `./go-plc -config config.yaml`
-   - Place flag parsing after slog setup, before config loading
-
-2. **Update main() function:**
-   - Parse the config flag at the start (after logger setup)
-   - If no config provided, log error and exit with `os.Exit(1)`
-   - Import your config package: `"github.com/aott33/go-plc/internal/config"`
-   - Call `config.Load(configPath)`
-   - On error: log structured error and exit with code 1
-   - On success: log "Configuration loaded successfully" with source count and variable count
-
-3. **Structured logging on success:**
+1. **Add blank import for protocol registration:**
    ```go
-   slog.Info("Configuration loaded successfully",
-       "sources", len(cfg.Sources),
-       "variables", len(cfg.Variables),
-       "logLevel", cfg.LogLevel,
+   import (
+       _ "github.com/aott33/go-plc/internal/source/modbus"
    )
    ```
+   This triggers the `init()` functions in tcp.go and rtu.go, registering them with the source registry.
 
-4. **Import path reminder:** Your import will be `github.com/aott33/go-plc/internal/config` (module path from go.mod + package path)
+2. **Add command-line flag and config loading:**
+   - Add `-config` flag for config file path
+   - Call `config.Load(configPath)`
+   - On error: log and exit
+   - On success: log with source/variable counts
 
-### Step 5: Create Example Configuration File
+See proposal Section 4.9 for the complete import block structure.
+
+### Step 6: Create Example Configuration File
 
 **Location:** `config.yaml` (project root)
 
-Create a valid example configuration file that demonstrates:
-- At least one modbus-tcp source
-- At least one modbus-rtu source (commented out if you don't have serial hardware)
-- Variables of different types (uint16, bool, float32)
-- Variables with and without scaling
-- Variables with different register types
+The YAML configuration schema is unchanged from the original story specification. See the YAML Configuration Schema section above for the complete example. The registry pattern is an internal implementation detail - the user-facing YAML remains identical.
 
-This file serves as documentation and testing reference.
+### Step 7: Write Unit Tests
 
-### Step 6: Write Unit Tests
-
-**Location:** `internal/config/config_test.go`
+**Locations:**
+- `internal/config/config_test.go` - Config package tests
+- `internal/source/modbus/tcp_test.go` - TCP config tests (optional but recommended)
+- `internal/source/modbus/rtu_test.go` - RTU config tests (optional but recommended)
 
 **Test cases to implement:**
 
 1. **Happy path tests:**
-   - Load valid config with all fields
-   - Load minimal valid config (only required fields)
-   - Verify default values are applied
+   - Load valid config with modbus-tcp and modbus-rtu sources
+   - Verify default values are applied in protocol Validate() methods
    - Verify all fields are correctly parsed
 
 2. **Error case tests:**
    - Missing config file
    - Invalid YAML syntax
-   - Missing required source fields (name, type, host)
-   - Unknown source type
+   - Unknown source type (registry returns error with registered types)
    - Variable referencing non-existent source
    - Invalid dataType
    - Bool dataType with holding register (should fail)
-   - Duplicate source names
-   - Duplicate variable names
-   - Invalid logLevel value
+   - Duplicate source/variable names
 
-3. **Test table pattern:**
-   Use Go's table-driven tests for validation cases:
-   ```go
-   func TestValidation(t *testing.T) {
-       tests := []struct {
-           name    string
-           yaml    string
-           wantErr string
-       }{
-           // ... test cases
-       }
-       for _, tt := range tests {
-           t.Run(tt.name, func(t *testing.T) {
-               // ... test implementation
-           })
-       }
-   }
-   ```
+3. **Registry tests:**
+   - Test that unknown source type produces helpful error message
+   - Optionally create a mock "test-source" type to demonstrate extensibility
+
+Use table-driven test pattern for validation cases.
 
 ---
 
 ## File Structure After Completion
 
 ```
-internal/config/
-├── doc.go          # Already exists from Story 1.1
-├── types.go        # Config struct definitions
-├── loader.go       # Load() function and custom unmarshaling
-└── config_test.go  # Unit tests
+internal/
+├── config/
+│   ├── doc.go          # Package documentation (exists from Story 1.1)
+│   ├── config.go       # Config, Source, Variable, Register, Scale types + Validate()
+│   ├── loader.go       # Load() function, rawSource/rawConfig for parsing
+│   └── config_test.go  # Unit tests
+├── source/
+│   ├── source.go       # Source interface, SourceConfig interface, SourceFactory type
+│   ├── registry.go     # Register(), ParseConfig(), RegisteredTypes()
+│   └── modbus/
+│       ├── tcp.go      # TCPConfig + init() registration + parseTCPConfig factory
+│       ├── rtu.go      # RTUConfig + init() registration + parseRTUConfig factory
+│       └── duration.go # Duration type for YAML time parsing
 
 cmd/go-plc/
-└── main.go         # Updated with flag parsing and config loading
+└── main.go             # Updated with blank import for modbus package
 
-config.yaml         # Example configuration file (project root)
-go.mod              # Updated with gopkg.in/yaml.v3 dependency
+config.yaml             # Example configuration (unchanged schema)
+go.mod                  # Updated: github.com/goccy/go-yaml dependency
 ```
+
+See [Sprint Change Proposal - Section 5](../sprint-change-proposal-2025-12-20.md#5-updated-file-structure) for detailed file structure.
 
 ---
 
 ## Dependencies to Add
 
-You'll need to add the YAML parsing library:
+Add the actively-maintained YAML library with better error messages:
 
 ```bash
-go get gopkg.in/yaml.v3
+go get github.com/goccy/go-yaml
 ```
 
-This is the recommended YAML library for Go. It supports the `yaml.Node` type which is useful for delayed/custom unmarshaling of type-discriminated configs.
+**Why this library:** Actively maintained (unlike archived yaml.v3), passes 60+ more YAML spec tests, provides line/column-annotated error messages - critical for debugging PLC configuration files.
 
 ---
 
 ## Common Pitfalls to Avoid
 
-1. **Don't use `map[string]interface{}`** for the final config representation. Type-assert and convert to typed structs during unmarshaling for compile-time safety.
+1. **Don't forget the blank import**. Without `_ "github.com/aott33/go-plc/internal/source/modbus"` in main.go, the protocol types won't register and you'll get "unknown source type" errors.
 
-2. **Don't validate in the Load function**. Separate parsing from validation - parse first, then validate the parsed result. This makes testing easier.
+2. **Don't modify internal/config/ for new protocols**. Future protocols (OPC-UA, MQTT) should create new packages in `internal/source/opcua/`, `internal/source/mqtt/`, etc. - NOT modify config code.
 
-3. **Don't ignore time.Duration parsing**. YAML strings like "100ms" need special handling. Consider using `yaml.v3`'s ability to unmarshal into `time.Duration` or write a custom type.
+3. **Don't validate in the Load function**. Call `cfg.Validate()` at the end of Load(), but keep parsing and validation as separate concerns.
 
-4. **Don't forget byte order defaults**. If byteOrder/wordOrder aren't specified, they should default to big-endian/high-word-first (standard Modbus convention).
+4. **Don't forget byte order defaults**. Apply defaults in the Validate() method of each protocol config.
 
-5. **Don't exit on first error**. Collect all validation errors and report them together. Users hate fixing one error only to discover another.
+5. **Don't exit on first error**. The Config.Validate() method collects ALL errors before returning - follow this pattern in protocol Validate() methods too.
 
-6. **Handle time.Duration correctly**. YAML strings like "100ms" or "5s" don't automatically unmarshal to `time.Duration`. You have two options:
-
-   **Option A: Custom Duration Type**
-   ```go
-   type Duration time.Duration
-
-   func (d *Duration) UnmarshalYAML(value *yaml.Node) error {
-       var s string
-       if err := value.Decode(&s); err != nil {
-           return err
-       }
-       duration, err := time.ParseDuration(s)
-       if err != nil {
-           return err
-       }
-       *d = Duration(duration)
-       return nil
-   }
-   ```
-
-   **Option B: String field with post-parse conversion**
-   Store as string in config struct, then parse to `time.Duration` in a separate validation/conversion step.
-
-   Option A is cleaner - the duration is typed correctly from the start.
+6. **Don't skip the Duration helper**. See proposal Section 4.6 for the complete Duration type implementation that handles YAML time strings.
 
 ---
 
@@ -515,14 +457,16 @@ go test -race ./internal/config/...
 
 ## Definition of Done Checklist
 
-- [ ] `internal/config/types.go` created with all struct definitions
-- [ ] `internal/config/loader.go` created with Load() function
-- [ ] Custom YAML unmarshaling works for type-discriminated sources
-- [ ] All validation rules implemented with clear error messages
-- [ ] Default values applied correctly
-- [ ] `cmd/go-plc/main.go` updated with `-config` flag
+- [x] `internal/source/source.go` created with interface definitions
+- [x] `internal/source/registry.go` created with Register/ParseConfig functions
+- [ ] `internal/source/modbus/tcp.go` created with TCPConfig and init() registration
+- [ ] `internal/source/modbus/rtu.go` created with RTUConfig and init() registration
+- [ ] `internal/source/modbus/duration.go` created for time.Duration YAML parsing
+- [ ] `internal/config/config.go` created with Config, Variable, Scale, Register types
+- [ ] `internal/config/loader.go` created with Load() using registry pattern
+- [ ] `cmd/go-plc/main.go` updated with `-config` flag and blank modbus import
 - [ ] `config.yaml` example file created in project root
-- [ ] Unit tests cover happy paths and error cases
+- [ ] Unit tests cover happy paths and error cases (including unknown source type)
 - [ ] All tests pass with `go test -race ./...`
 - [ ] `go vet ./...` passes with no warnings
 - [ ] Logging uses slog with correct format

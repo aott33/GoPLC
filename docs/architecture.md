@@ -303,6 +303,18 @@ variables:
 
 **Poll Interval:** Per-source (not per-variable)
 
+**Protocol Source Registry Pattern:**
+
+The configuration loading implementation uses a registry pattern for protocol-specific source configs to enable extensibility without modifying core config code:
+
+- **Registry Location:** `internal/source/registry.go` provides `Register()`, `ParseConfig()`, and `RegisteredTypes()` functions
+- **Protocol Packages:** Each protocol (e.g., `internal/source/modbus/`) implements `SourceConfig` interface and registers itself via `init()`
+- **Factory Pattern:** Protocol packages provide factory functions that parse YAML config nodes into typed structs
+- **Zero-Touch Addition:** New protocols (OPC-UA client, MQTT, EtherNet/IP) can be added by creating a new package under `internal/source/` without touching existing code
+- **Blank Imports:** `main.go` uses blank imports (`_ "github.com/aott33/go-plc/internal/source/modbus"`) to trigger protocol registration
+
+See [Sprint Change Proposal 2025-12-20](../sprint-change-proposal-2025-12-20.md) for complete technical specification and rationale.
+
 ### Authentication & Security
 
 **MVP Security Posture:**
@@ -562,8 +574,14 @@ go-plc/
 │   ├── config/
 │   │   ├── config.go                  # Config struct definitions
 │   │   ├── loader.go                  # YAML parsing and validation
-│   │   ├── types.go                   # Source/Variable config types
 │   │   └── config_test.go
+│   ├── source/                        # Protocol source registry pattern
+│   │   ├── source.go                  # Source interface definitions
+│   │   ├── registry.go                # Protocol factory registry
+│   │   └── modbus/
+│   │       ├── tcp.go                 # Modbus TCP config + registration
+│   │       ├── rtu.go                 # Modbus RTU config + registration
+│   │       └── duration.go            # Duration type for YAML parsing
 │   ├── variables/
 │   │   ├── store.go                   # Variable store (RWMutex + map)
 │   │   ├── variable.go                # Variable struct and methods
@@ -752,7 +770,7 @@ go-plc/
 | WebUI Monitoring (FR31-37) | `web/src/` | `App.tsx`, `components/*.tsx` |
 | Task Development (FR38-42) | `internal/tasks/` | `discovery.go`, `executor.go`, `context.go` |
 | Logging & Diagnostics (FR43-46) | All packages | slog calls throughout |
-| Configuration (FR47-50) | `internal/config/` | `config.go`, `loader.go`, `types.go` |
+| Configuration (FR47-50) | `internal/config/`, `internal/source/` | `config.go`, `loader.go`, `registry.go` |
 | Deployment (FR51-53) | Root + `docs-site/` | `Dockerfile`, `Makefile`, `docs-site/` |
 
 **Cross-Cutting Concerns Location:**

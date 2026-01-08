@@ -27,6 +27,7 @@ npm
 # Go build artifacts
 go-plc
 go-plc.exe
+!cmd/go-plc
 *.exe
 build/
 

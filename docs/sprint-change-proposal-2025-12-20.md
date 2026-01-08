@@ -1,7 +1,9 @@
 # Sprint Change Proposal: Story 1.2 Architecture Enhancement
 
 **Date:** 2025-12-20
-**Status:** Proposed
+**Status:** Approved
+**Approved By:** Andy
+**Approved Date:** 2026-01-08
 **Triggered By:** Story 1.2 - Configuration Schema & Loading (pre-development review)
 **Change Scope:** Minor - Direct implementation within current story
 
@@ -195,7 +197,7 @@ type SourceConfig interface {
 
 // SourceFactory creates a SourceConfig from YAML node data.
 // The factory is responsible for parsing protocol-specific fields.
-type SourceFactory func(name string, configNode yaml.Node) (SourceConfig, error)
+type SourceFactory func(name string, configNode ast.Node) (SourceConfig, error)
 ```
 
 ### 4.3 Registry Implementation
@@ -889,10 +891,18 @@ This change can be implemented directly by the development team within the exist
 **Proposed By:** Bob (Scrum Master Agent)
 **Date:** 2025-12-20
 
-**User Approval:** [ ] Approved / [ ] Rejected / [ ] Needs Revision
+**User Approval:** [X] Approved / [ ] Rejected / [ ] Needs Revision
+
+**Approved By:** Andy
+**Approval Date:** 2026-01-08
+
+**Implementation Status:**
+- [X] Story 1.2 document updated with registry pattern reference
+- [X] Architecture document updated with registry pattern details
+- [ ] Code implementation (Story 1.2 development in progress)
 
 **Notes:**
-_Space for user comments or conditions_
+Approved for implementation. Story 1.2 and architecture documents have been updated to reflect the registry pattern approach. Development can proceed following Section 4 technical specification.
 
 ---
 

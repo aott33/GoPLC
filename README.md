@@ -43,6 +43,23 @@ GoPLC communicates with industrial devices via standard protocols and exposes da
 
 Variables are defined once in YAML and automatically exposed to all protocols. The runtime handles scheduling, scaling, and protocol translation.
 
+## Development Guidelines
+
+**Project Structure:**
+- Registry pattern for extensible protocol support
+- Protocol implementations in `internal/source/<protocol>/`
+- Each protocol self-registers via `init()` functions
+
+**Error Management:**
+- Use structured error format: `[Component] - [Description] (context: value, ...)`
+  - Example: `[config] - Unknown source type 'opcua' (source: plc1)`
+- Each package contains an `errors.go` file with helper functions
+- Use `panic()` only for programmer errors; return `error` for runtime errors
+
+**Testing:**
+- Unit tests use table-driven test pattern
+- Test coverage required for all error paths
+
 ## Contributing
 
 Contributions are welcome. If you find a bug or have a feature request, please open an issue. If you want to submit code, please open a pull request with a clear description of your changes.
