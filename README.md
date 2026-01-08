@@ -47,20 +47,6 @@ Variables are defined once in YAML and automatically exposed to all protocols. T
 
 Contributions are welcome. If you find a bug or have a feature request, please open an issue. If you want to submit code, please open a pull request with a clear description of your changes.
 
-## Development Methodology
-
-This project uses a hybrid AI-assisted workflow:
-
-| Phase | Who |
-|-------|-----|
-| Planning & Documentation | AI-assisted (BMAD framework) |
-| PRD, UX Design, Architecture | AI-assisted |
-| Epics & Stories | AI-assisted (written for human developers) |
-| **Development** | **Human (me)** |
-| Code Review & QA | AI-assisted |
-
-The goal: leverage AI where it excels (structured documentation, planning, review) while keeping implementation skills sharp through hands-on development.
-
 ## License
 
 O'Saasy License Agreement - MIT do-whatever-you-want license, but with the commercial rights for SaaS reserved for the copyright holder.
