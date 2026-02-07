@@ -26,7 +26,7 @@ func main() {
 
 	// future work
 	// startup sequence:
-	// parse command line flags
+	// parse command line flags TODO: command line library to handle this?
 	// load and validate yaml file
 	// initialize variable store
 	// connect to sources
