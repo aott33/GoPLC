@@ -26,7 +26,7 @@ func main() {
 
 	// future work
 	// startup sequence:
-	// parse command line flags TODO: command line library to handle this?
+	// parse command line flags TODO: command line library to handle this? We can use the Golang flags package for simple commands or we can use spf13/cobra for a powerful CLI application 
 	// load and validate yaml file
 	// initialize variable store
 	// connect to sources
