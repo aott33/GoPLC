@@ -28,9 +28,10 @@ func Register(typeName string, factory SourceFactory) {
 // ParseConfig parses a source configuration using the registered factory.
 // Returns an error if the source type is not registered.
 func ParseConfig(typeName, name string, configNode ast.Node) (SourceConfig, error) {
-	mu.RUnlock()
-	factory, exists := registry[typeName]
 	mu.RLock()
+	defer mu.RUnlock()
+
+	factory, exists := registry[typeName]
 
 	if !exists {
 		return nil, errUnknownSourceType(typeName, name)
@@ -42,13 +43,12 @@ func ParseConfig(typeName, name string, configNode ast.Node) (SourceConfig, erro
 // RegisteredTypes returns a list of all registered source types.
 // Useful for validation error messages.
 func RegisteredTypes() []string {
-	mu.RUnlock()
-	registeryCopy := registry
-	mu.Lock()
+	mu.RLock()
+	defer mu.RUnlock()
 
 	sourceTypes := []string{}
 
-	for typeName := range registeryCopy {
+	for typeName := range registry {
 		sourceTypes = append(sourceTypes, typeName)
 	}
 

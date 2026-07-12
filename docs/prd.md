@@ -185,6 +185,11 @@ If the developer would choose go-plc over CompactLogix for commissioning a real 
   - VFDs (PowerFlex series)
   - Remote I/O (Point I/O, Flex I/O)
   - Other Allen-Bradley compatible devices
+- **CESMII i3x** - Smart Manufacturing Innovation Platform integration for:
+  - Semantic information models (SM_Platform ontology)
+  - Digital manufacturing profiles and templates
+  - Cloud connectivity with manufacturing analytics platforms
+  - Standards-based manufacturing data exchange
 
 **Enhanced WebUI:**
 - Source configuration (add, modify, enable/disable Modbus/OPC UA/Ethernet/IP sources)

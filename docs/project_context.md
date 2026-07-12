@@ -4,7 +4,7 @@
 
 ## Project Overview
 
-**go-plc** is a soft PLC (Programmable Logic Controller) written in Go with a React-based monitoring WebUI. It communicates with industrial devices via Modbus TCP/RTU, exposes data through OPC UA server and Sparkplug B MQTT, and provides a GraphQL API for the embedded web interface.
+**go-plc** is a soft PLC (Programmable Logic Controller) written in Go with a React-based monitoring WebUI. It communicates with industrial devices via Modbus TCP/RTU, exposes data through OPC UA server and optional Zenoh protocol (Phase 2), and provides a GraphQL API for the embedded web interface.
 
 **Target Platform:** Real-time Linux OS (PREEMPT_RT kernel recommended)
 **Development Platform:** Any OS (Linux, Windows, macOS)
@@ -68,7 +68,7 @@ Modbus Poller → Variable Store ← Task Execution
                      ↓
     ┌────────────────┼────────────────┐
     ↓                ↓                ↓
-GraphQL Subs    OPC UA Server   Sparkplug B
+GraphQL Subs    OPC UA Server   Zenoh (Phase 2)
 ```
 
 **Implementation:** `sync.RWMutex` + `map[string]*Variable`
@@ -84,7 +84,7 @@ All implementation code goes in `internal/` - this is private and cannot be impo
 | `internal/runtime` | PLC scheduler, state machine, lifecycle |
 | `internal/modbus` | Modbus TCP/RTU client, connection manager, polling |
 | `internal/opcua` | OPC UA server, node generation, handlers |
-| `internal/sparkplug` | Sparkplug B client, NBIRTH/NDATA/NDEATH encoding |
+| `internal/zenoh` | Zenoh protocol integration (Phase 2) |
 | `internal/api` | GraphQL server, resolvers, subscriptions |
 | `internal/tasks` | Task discovery, execution runtime |
 
@@ -96,7 +96,7 @@ These are mandated - do not substitute:
 |---------|---------|
 | `github.com/simonvetter/modbus` | Modbus TCP/RTU client |
 | `github.com/gopcua/opcua` | OPC UA server |
-| `github.com/eclipse/paho.mqtt.golang` | MQTT for Sparkplug B |
+| `zenoh-go` (contribute) | Zenoh protocol (Phase 2) |
 | `github.com/99designs/gqlgen` | GraphQL server |
 
 ### Frontend Stack
@@ -261,7 +261,6 @@ import (
 
     "github.com/simonvetter/modbus"
     "github.com/gopcua/opcua"
-    "github.com/eclipse/paho.mqtt.golang"
 )
 
 // Variable store access pattern

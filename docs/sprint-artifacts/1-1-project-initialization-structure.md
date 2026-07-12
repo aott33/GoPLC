@@ -48,7 +48,7 @@ go-plc/
 │   ├── runtime/                 <- Will hold scheduler (Story 1.7)
 │   ├── modbus/                  <- Will hold Modbus client (Epic 2)
 │   ├── opcua/                   <- Will hold OPC UA server (Epic 5)
-│   ├── sparkplug/               <- Will hold MQTT client (future)
+│   ├── zenoh/                   <- Will hold Zenoh protocol (Phase 2)
 │   ├── api/                     <- Will hold GraphQL (Epic 3)
 │   └── tasks/                   <- Will hold task executor (Story 1.5)
 ├── web/                         <- Frontend placeholder (Epic 4)
@@ -108,7 +108,7 @@ Create all required directories with a single command:
 
 ```bash
 # From the project root (go-plc/) - creates everything in one shot
-mkdir -p cmd/go-plc internal/{config,variables,runtime,modbus,opcua,sparkplug,api,tasks} web tasks scripts
+mkdir -p cmd/go-plc internal/{config,variables,runtime,modbus,opcua,zenoh,api,tasks} web tasks scripts
 ```
 
 **Why these specific directories?**
@@ -185,11 +185,12 @@ package modbus
 package opcua
 ```
 
-**internal/sparkplug/doc.go:**
+**internal/zenoh/doc.go:**
 ```go
-// Package sparkplug implements Sparkplug B MQTT messaging.
-// It enables SCADA integration via MQTT with the Sparkplug B specification.
-package sparkplug
+// Package zenoh implements Zenoh protocol integration.
+// It enables high-performance pub/sub, storage, and query/reply patterns
+// for SCADA integration (Phase 2).
+package zenoh
 ```
 
 **internal/api/doc.go:**
@@ -663,7 +664,7 @@ This story implements the project structure defined in:
 - `internal/runtime/doc.go` - Runtime package placeholder
 - `internal/modbus/doc.go` - Modbus package placeholder
 - `internal/opcua/doc.go` - OPC UA package placeholder
-- `internal/sparkplug/doc.go` - Sparkplug package placeholder
+- `internal/zenoh/doc.go` - Zenoh package placeholder
 - `internal/api/doc.go` - API package placeholder
 - `internal/tasks/doc.go` - Tasks package placeholder
 - `web/README.md` - Frontend directory breadcrumb
