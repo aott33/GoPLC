@@ -23,6 +23,16 @@ type TCPConfig struct {
 	WordOrder     string        `yaml:"wordOrder"`
 }
 
+const (
+	DefaultPort          int           = 502
+	DefaultUnitID        uint8         = 1
+	DefaultTimout        time.Duration = 1 * time.Second
+	DefaultPollInterval  time.Duration = 1000 * time.Millisecond
+	DefaultRetryInterval time.Duration = 10 * time.Second
+	DefaultByteOrder     string        = "big-endian"
+	DefaultWordOrder     string        = "high-word-first"
+)
+
 // SourceType returns the protocol identifier.
 func (cfg *TCPConfig) SourceType() string {
 	return "modbus-tcp"
