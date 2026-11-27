@@ -4,6 +4,7 @@ package modbus
 
 import (
 	"errors"
+	"log/slog"
 	"time"
 
 	"github.com/aott33/go-plc/internal/source"
@@ -123,4 +124,18 @@ func parseTCPConfig(name string, configNode ast.Node) (source.SourceConfig, erro
 	}
 
 	return &cfg, nil
+}
+
+// LogValue implements slog.LogValuer so a source can be logged with readable durations.
+func (cfg *TCPConfig) LogValue() slog.Value {
+	return slog.GroupValue(
+		slog.String("host", cfg.Host),
+		slog.Int("port", cfg.Port),
+		slog.Int("unitId", int(cfg.UnitID)),
+		slog.String("timeout", cfg.Timeout.Duration().String()),
+		slog.String("pollInterval", cfg.PollInterval.Duration().String()),
+		slog.String("retryInterval", cfg.RetryInterval.Duration().String()),
+		slog.String("byteOrder", cfg.ByteOrder),
+		slog.String("wordOrder", cfg.WordOrder),
+	)
 }
