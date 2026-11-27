@@ -16,7 +16,52 @@ Industrial automation is stuck in the past. Proprietary IDEs, vendor lock-in, no
 
 ## Quick Start
 
-Coming soon. Installation and usage instructions will be added as the project develops.
+Requirements: Go 1.25 or newer, and Docker (for the Modbus simulator).
+
+```bash
+git clone https://github.com/aott33/GoPLC.git
+cd GoPLC
+
+# Start a Modbus TCP simulator on localhost:5020
+docker compose up -d
+
+# Build and run with the example configuration
+make build
+./go-plc -config configs/example.yaml
+```
+
+GoPLC loads `configs/example.yaml`, validates it and logs each configured source as JSON. The runtime that polls sources is not implemented yet, so the program exits after startup.
+
+Useful flags:
+
+- `-config <path>`: configuration file (default `configs/example.yaml`)
+- `-log-level <level>`: `debug`, `info`, `warn` or `error`; overrides `logLevel` in the file
+
+Development commands:
+
+```bash
+make test   # go test -race ./...
+make lint   # golangci-lint run
+make help   # list all targets
+```
+
+Stop the simulator with `docker compose down`. The simulator's seeded registers are listed in `scripts/modbus-sim/server.py`.
+
+## Status
+
+GoPLC is in early development.
+
+| Feature | Status |
+|---|---|
+| YAML configuration and validation | Done |
+| Modbus TCP source (client, polling, reconnect) | In progress |
+| Modbus RTU | Planned |
+| OPC UA server | Planned |
+| GraphQL API | Planned |
+| Zenoh pub/sub | Planned |
+| Web UI | Planned |
+
+Planning documents are in [`docs/planning/`](docs/planning/).
 
 ## Usage
 

@@ -1,8 +1,8 @@
 ---
 stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8]
 inputDocuments:
-  - 'docs/prd.md'
-  - 'docs/ux-design-specification.md'
+  - 'docs/planning/prd.md'
+  - 'docs/planning/ux-design-specification.md'
 workflowType: 'architecture'
 lastStep: 8
 status: 'complete'
@@ -312,7 +312,7 @@ The configuration loading implementation uses a registry pattern for protocol-sp
 - **Zero-Touch Addition:** New protocols (OPC-UA client, MQTT, EtherNet/IP) can be added by creating a new package under `internal/source/` without touching existing code
 - **Blank Imports:** `main.go` uses blank imports (`_ "github.com/aott33/go-plc/internal/source/modbus"`) to trigger protocol registration
 
-See [Sprint Change Proposal 2025-12-20](../sprint-change-proposal-2025-12-20.md) for complete technical specification and rationale.
+See [Sprint Change Proposal 2025-12-20](sprint-change-proposal-2025-12-20.md) for complete technical specification and rationale.
 
 ### Authentication & Security
 
@@ -1005,7 +1005,7 @@ Project initialization using the specified structure and initialization commands
 **Architecture Decision Workflow:** COMPLETED
 **Total Steps Completed:** 8
 **Date Completed:** 2025-12-14
-**Document Location:** docs/architecture.md
+**Document Location:** docs/planning/architecture.md
 
 ### Final Architecture Deliverables
 

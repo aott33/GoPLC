@@ -553,7 +553,7 @@ make clean
 After completing development, follow these steps:
 
 ### 1. Update Story Status
-Change status in `docs/sprint-artifacts/sprint-status.yaml`:
+Change status in `docs/planning/sprint-artifacts/sprint-status.yaml`:
 ```yaml
 1-1-project-initialization-structure: review  # was: ready-for-dev
 ```
@@ -574,7 +574,7 @@ This runs an **adversarial review** that:
 - Re-run review if needed
 
 ### 4. Mark Story Complete
-Update status in `docs/sprint-artifacts/sprint-status.yaml`:
+Update status in `docs/planning/sprint-artifacts/sprint-status.yaml`:
 ```yaml
 1-1-project-initialization-structure: done  # was: review
 ```
@@ -643,9 +643,9 @@ go build -o go-plc.exe ./cmd/go-plc
 
 This story implements the project structure defined in:
 
-- [Architecture: Project Structure](docs/architecture.md) - Complete directory specification
-- [Architecture: Naming Patterns](docs/architecture.md) - Naming conventions
-- [Architecture: Implementation Patterns](docs/architecture.md) - Code patterns
+- [Architecture: Project Structure](../architecture.md) - Complete directory specification
+- [Architecture: Naming Patterns](../architecture.md) - Naming conventions
+- [Architecture: Implementation Patterns](../architecture.md) - Code patterns
 
 ---
 

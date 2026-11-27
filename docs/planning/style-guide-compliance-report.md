@@ -255,7 +255,7 @@ Demonstrate all source types, variable definitions, supported data types, and ta
 
 **8. Create CONTRIBUTING.md**
 
-Reference Effective Go, Google Go Style Guide, Google TypeScript Style Guide, and project-specific patterns from docs/architecture.md.
+Reference Effective Go, Google Go Style Guide, Google TypeScript Style Guide, and project-specific patterns from docs/planning/architecture.md.
 
 ### Low Priority (Before 1.0)
 
@@ -450,10 +450,10 @@ Breakdown:
 - staticcheck: https://staticcheck.io/
 
 ### Project Documentation
-- PRD: docs/prd.md
-- Architecture: docs/architecture.md
-- Project Context: docs/project_context.md
-- Epics and Stories: docs/epics.md
+- PRD: docs/planning/prd.md
+- Architecture: docs/planning/architecture.md
+- Project Context: docs/planning/project_context.md
+- Epics and Stories: docs/planning/epics.md
 
 ---
 

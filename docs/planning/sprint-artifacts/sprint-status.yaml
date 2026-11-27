@@ -2,7 +2,7 @@
 # Generated: 2025-12-15
 # Project: go-plc
 # Tracking System: file-system
-# Story Location: docs/sprint-artifacts
+# Story Location: docs/planning/sprint-artifacts
 
 # ============================================================================
 # STATUS DEFINITIONS (for Human Developer)
@@ -15,7 +15,7 @@
 #
 # STORY STATUS:
 #   backlog       - Story exists only in epics.md, no separate story file yet
-#   drafted       - Story file created in docs/sprint-artifacts/{story-id}.md
+#   drafted       - Story file created in docs/planning/sprint-artifacts/{story-id}.md
 #                   Contains detailed requirements, AC, and implementation notes
 #   ready-for-dev - Story reviewed, questions answered, context file created
 #                   Ready for the developer to start implementation
@@ -64,7 +64,7 @@
 generated: 2025-12-15
 project: go-plc
 tracking_system: file-system
-story_location: docs/sprint-artifacts
+story_location: docs/planning/sprint-artifacts
 
 development_status:
   # ==========================================================================

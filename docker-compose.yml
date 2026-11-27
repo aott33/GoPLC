@@ -1,0 +1,17 @@
+# Local Modbus TCP simulator for development.
+#
+#   docker compose up -d      # start on localhost:5020
+#   docker compose down       # stop
+#
+# The seeded registers are listed in scripts/modbus-sim/server.py.
+services:
+  modbus-sim:
+    image: python:3.12-slim
+    command: >
+      sh -c "pip install --no-cache-dir --quiet pymodbus==3.11.4 &&
+             python -u /sim/server.py"
+    volumes:
+      - ./scripts/modbus-sim:/sim:ro
+    ports:
+      - "5020:5020"
+    restart: unless-stopped

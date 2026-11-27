@@ -1,7 +1,7 @@
 # Example GoPLC configuration.
 #
-# The modbus-tcp source below points at a Modbus TCP server on
-# 127.0.0.1:5020.
+# The modbus-tcp source below points at the local simulator started with
+# `docker compose up -d` (see docker-compose.yml).
 
 # Log level: debug, info, warn or error. Default: info.
 logLevel: info
