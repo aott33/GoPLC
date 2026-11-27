@@ -1,10 +1,15 @@
 package source
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 // errUnknownSourceType returns an error when a source type is not registered in the factory registry.
-func errUnknownSourceType(typeName, sourceName string) error {
-	return fmt.Errorf("[config] - Unknown source type '%s' (source: %s)", typeName, sourceName)
+// The registered types are listed so the user can see what is available.
+func errUnknownSourceType(typeName, sourceName string, registered []string) error {
+	return fmt.Errorf("[config] - Unknown source type '%s' (source: %s, registered: %s)",
+		typeName, sourceName, strings.Join(registered, ", "))
 }
 
 // errDuplicateRegistration returns a string when a source type is registered multiple times.

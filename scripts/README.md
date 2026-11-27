@@ -2,7 +2,8 @@
 
 This directory contains build automation and utility scripts for GoPLC.
 
-**Current contents:** None yet
+**Current contents:**
+- `modbus-sim/server.py` - Modbus TCP simulator used by `docker-compose.yml` for local development
 
 **Planned additions:**
 - Cross-compilation scripts (Story 6.2)

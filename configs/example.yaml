@@ -1,0 +1,20 @@
+# Example GoPLC configuration.
+#
+# The modbus-tcp source below points at the local simulator started with
+# `docker compose up -d` (see docker-compose.yml).
+
+# Log level: debug, info, warn or error. Default: info.
+logLevel: info
+
+sources:
+  - name: simulator           # Unique source name
+    type: modbus-tcp
+    config:
+      host: 127.0.0.1         # Required
+      port: 5020              # Default: 502
+      unitId: 1               # Default: 1
+      timeout: 1s             # Default: 1s
+      pollInterval: 1s        # Default: 1s
+      retryInterval: 5s       # Default: 10s
+      byteOrder: big-endian   # big-endian or little-endian. Default: big-endian
+      wordOrder: high-word-first # high-word-first or low-word-first. Default: high-word-first

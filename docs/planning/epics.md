@@ -1,11 +1,10 @@
 ---
 stepsCompleted: [1, 2, 3, 4]
 inputDocuments:
-  - 'docs/prd.md'
-  - 'docs/architecture.md'
-  - 'docs/ux-design-specification.md'
+  - 'docs/planning/prd.md'
+  - 'docs/planning/architecture.md'
+  - 'docs/planning/ux-design-specification.md'
 project_name: 'go-plc'
-user_name: 'Andy'
 date: '2025-12-15'
 ---
 

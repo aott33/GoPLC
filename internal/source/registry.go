@@ -1,6 +1,7 @@
 package source
 
 import (
+	"slices"
 	"sync"
 
 	"github.com/goccy/go-yaml/ast"
@@ -34,23 +35,31 @@ func ParseConfig(typeName, name string, configNode ast.Node) (SourceConfig, erro
 	factory, exists := registry[typeName]
 
 	if !exists {
-		return nil, errUnknownSourceType(typeName, name)
+		return nil, errUnknownSourceType(typeName, name, registeredTypesLocked())
 	}
 
 	return factory(name, configNode)
 }
 
-// RegisteredTypes returns a list of all registered source types.
+// RegisteredTypes returns all registered source types, sorted.
 // Useful for validation error messages.
 func RegisteredTypes() []string {
 	mu.RLock()
 	defer mu.RUnlock()
 
-	sourceTypes := []string{}
+	return registeredTypesLocked()
+}
+
+// registeredTypesLocked returns the sorted registered types.
+// The caller must hold mu.
+func registeredTypesLocked() []string {
+	sourceTypes := make([]string, 0, len(registry))
 
 	for typeName := range registry {
 		sourceTypes = append(sourceTypes, typeName)
 	}
+
+	slices.Sort(sourceTypes)
 
 	return sourceTypes
 }

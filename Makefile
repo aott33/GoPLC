@@ -11,6 +11,12 @@ GO := go
 # Build flags (can be extended later for version injection)
 LDFLAGS :=
 
+# Tool versions (keep in sync with .github/workflows/ci.yml)
+GOLANGCI_LINT_VERSION := v2.5.0
+
+# Fuzzing
+FUZZ_TIME := 60s
+
 # Default target
 .DEFAULT_GOAL := help
 
@@ -34,13 +40,17 @@ build-all: ## Build for all target platforms
 
 .PHONY: test
 test: ## Run all tests with race detection
-	$(GO) test -race -v ./...
+	$(GO) test -race ./...
 
 .PHONY: test-coverage
 test-coverage: ## Run tests with coverage report
 	$(GO) test -race -coverprofile=coverage.out ./...
 	$(GO) tool cover -html=coverage.out -o coverage.html
 	@echo "Coverage report: coverage.html"
+
+.PHONY: fuzz
+fuzz: ## Fuzz the Modbus frame parser (FUZZ_TIME=60s)
+	$(GO) test -fuzz=FuzzParseADU -fuzztime=$(FUZZ_TIME) ./internal/modbus
 
 # ============================================================
 # CODE QUALITY
@@ -50,9 +60,9 @@ test-coverage: ## Run tests with coverage report
 lint: ## Run linter (requires golangci-lint)
 	@which golangci-lint > /dev/null 2>&1 || \
 		(echo "golangci-lint not installed. Install with:" && \
-		 echo "  go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest" && \
+		 echo "  go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)" && \
 		 exit 1)
-	golangci-lint run ./...
+	golangci-lint run
 
 .PHONY: fmt
 fmt: ## Format all Go code

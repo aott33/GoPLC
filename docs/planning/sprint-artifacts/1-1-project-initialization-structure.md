@@ -124,7 +124,7 @@ The `internal/` directory is a Go convention - code here can only be imported by
 go mod init github.com/yourusername/go-plc
 ```
 
-**Replace `yourusername`** with your actual GitHub username (e.g., `andrewott`).
+**Replace `yourusername`** with your actual GitHub username.
 
 This creates `go.mod` which tells Go:
 - What this module is called
@@ -553,7 +553,7 @@ make clean
 After completing development, follow these steps:
 
 ### 1. Update Story Status
-Change status in `docs/sprint-artifacts/sprint-status.yaml`:
+Change status in `docs/planning/sprint-artifacts/sprint-status.yaml`:
 ```yaml
 1-1-project-initialization-structure: review  # was: ready-for-dev
 ```
@@ -574,7 +574,7 @@ This runs an **adversarial review** that:
 - Re-run review if needed
 
 ### 4. Mark Story Complete
-Update status in `docs/sprint-artifacts/sprint-status.yaml`:
+Update status in `docs/planning/sprint-artifacts/sprint-status.yaml`:
 ```yaml
 1-1-project-initialization-structure: done  # was: review
 ```
@@ -643,16 +643,15 @@ go build -o go-plc.exe ./cmd/go-plc
 
 This story implements the project structure defined in:
 
-- [Architecture: Project Structure](docs/architecture.md) - Complete directory specification
-- [Architecture: Naming Patterns](docs/architecture.md) - Naming conventions
-- [Architecture: Implementation Patterns](docs/architecture.md) - Code patterns
+- [Architecture: Project Structure](../architecture.md) - Complete directory specification
+- [Architecture: Naming Patterns](../architecture.md) - Naming conventions
+- [Architecture: Implementation Patterns](../architecture.md) - Code patterns
 
 ---
 
 ## Dev Notes After Completion
 
-- running go mod init create a go.mod file with go version 1.24.5
-  - I ran go mod edit -go=1.25 to update the version
+- `go mod init` created go.mod with Go 1.24.5; it was updated with `go mod edit -go=1.25`
 
 ### Files Created
 

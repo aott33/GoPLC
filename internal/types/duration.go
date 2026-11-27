@@ -2,6 +2,7 @@
 package types
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/goccy/go-yaml"
@@ -21,6 +22,9 @@ func (d *Duration) UnmarshalYAML(node ast.Node) error {
 
 	duration, err := time.ParseDuration(s)
 	if err != nil {
+		if tok := node.GetToken(); tok != nil && tok.Position != nil {
+			return fmt.Errorf("[%d:%d] %w", tok.Position.Line, tok.Position.Column, err)
+		}
 		return err
 	}
 
