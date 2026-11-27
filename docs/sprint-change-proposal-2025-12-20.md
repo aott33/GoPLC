@@ -2,7 +2,6 @@
 
 **Date:** 2025-12-20
 **Status:** Approved
-**Approved By:** Andy
 **Approved Date:** 2026-01-08
 **Triggered By:** Story 1.2 - Configuration Schema & Loading (pre-development review)
 **Change Scope:** Minor - Direct implementation within current story
@@ -893,7 +892,6 @@ This change can be implemented directly by the development team within the exist
 
 **User Approval:** [X] Approved / [ ] Rejected / [ ] Needs Revision
 
-**Approved By:** Andy
 **Approval Date:** 2026-01-08
 
 **Implementation Status:**

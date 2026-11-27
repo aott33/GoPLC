@@ -8,7 +8,6 @@ lastStep: 8
 status: 'complete'
 completedAt: '2025-12-14'
 project_name: 'go-plc'
-user_name: 'Andy'
 date: '2025-12-14'
 ---
 

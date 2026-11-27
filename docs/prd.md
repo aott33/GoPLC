@@ -10,20 +10,18 @@ documentCounts:
 workflowType: 'prd'
 lastStep: 11
 project_name: 'go-plc'
-user_name: 'Andy'
 date: '2025-12-13'
 ---
 
 # Product Requirements Document - go-plc
 
-**Author:** Andy
 **Date:** 2025-12-13
 
 ## Executive Summary
 
 **go-plc** is a fast, simple soft PLC built in Go that enables automation engineers to develop and test PLC programs using modern software development tools and workflows. Designed for rapid iteration cycles, comprehensive industrial connectivity, and AI-assisted development - making PLC programming accessible to modern developers without requiring proprietary IDEs or vendor-specific languages.
 
-**Primary Context:** Boot.dev capstone project with ~50 hours to MVP, built with community feedback and designed for real-world use beyond academic demonstration.
+**Primary Context:** Open-source project built with community feedback and designed for real-world use.
 
 **Target Users:**
 - **Primary:** Automation engineers frustrated with slow iteration cycles and proprietary tooling who want to use modern development workflows (Git, IDEs, CI/CD)
@@ -79,34 +77,33 @@ Users know Go, read the documentation, and get their first PLC program running q
 
 ### Business Success
 
-**Capstone Success (50 hours):**
-- ✅ Tank battery reference implementation completed (migrated from CompactLogix)
+**MVP Success:**
+- ✅ Example tank battery application completed
 - ✅ Professional documentation (Docusaurus) enables others to replicate
-- ✅ Demonstrates advanced Go skills: concurrency, protocols, APIs, real-time constraints
-- ✅ AI-assisted migration workflow documented (CompactLogix → go-plc)
+- ✅ Covers concurrency, protocols, APIs and real-time constraints
+- ✅ AI-assisted migration workflow documented (traditional PLC → go-plc)
 
 **The Ultimate Test:**
-**"Would I actually use this in a real control project?"**
+**"Would an engineer actually use this in a real control project?"**
 
-If the developer would choose go-plc over CompactLogix for commissioning a real tank battery, the project succeeds.
+If an engineer would choose go-plc over a traditional PLC for commissioning a real tank battery, the project succeeds.
 
-**3 Months Post-Capstone:**
+**3 Months Post-MVP:**
 - At least one other person successfully deployed go-plc for a real or test project
 - Community feedback incorporated from Discord/GitHub during development
-- go-plc version of tank battery is simpler/clearer than Rockwell version
+- go-plc version of the tank battery example is simpler/clearer than an equivalent ladder logic version
 
 **12 Months:**
-- Developer still using it / would recommend it for control projects
+- Users would recommend it for control projects
 - Small community of users exists
-- Project demonstrates deep understanding of industrial control systems
 
 ### Technical Success
 
 **Core Success Pillars:**
 
 **1. Ease of Development**
-- Time to implement tank battery competitive with CompactLogix
-- Reduced lines of code compared to Rockwell implementation
+- Time to implement tank battery competitive with a traditional PLC
+- Reduced lines of code compared to an equivalent ladder logic implementation
 - Clear, maintainable Go code structure
 
 **2. Ease of Integration**
@@ -148,7 +145,7 @@ If the developer would choose go-plc over CompactLogix for commissioning a real 
 
 ## Product Scope
 
-### MVP - Minimum Viable Product (50 hours)
+### MVP - Minimum Viable Product
 
 **Core PLC Runtime:**
 1. **Modbus I/O** - Read/write holding registers and coils via Modbus TCP using simonvetter/modbus library (includes RTU/ASCII for future use). Python Modbus simulator for testing without physical hardware.
@@ -161,7 +158,7 @@ If the developer would choose go-plc over CompactLogix for commissioning a real 
    - Variable list with real-time values
    - Task list with configuration, execution status, and enable/disable control
 6. **Comprehensive documentation** - Docusaurus site with setup, configuration, task programming guide, and tank battery walkthrough
-7. **Tank battery reference implementation** - Real-world control project migrated from CompactLogix
+7. **Tank battery reference implementation** - Example control application (tank level monitoring, pump sequencing, alarm logic)
 
 **Reliability Features (MVP):**
 - Modbus automatic reconnection logic with exponential backoff
@@ -319,37 +316,6 @@ By week 4, all three sites are commissioned and running. David finishes two week
 - Fast rebuild and restart workflow for field changes
 - Production-ready reliability and error handling
 
-### Journey 5: Andy - Proving Modern PLC Development
-**User Type: Developer/Creator (Capstone Context)**
-
-Andy is completing his Boot.dev capstone project and wants to build something that demonstrates real-world engineering skills - not just another CRUD app that sits in a GitHub repo collecting dust. He's worked in industrial automation and knows the pain points: slow iteration, proprietary tools, vendor lock-in. He decides to build go-plc to prove there's a better way.
-
-He has an existing CompactLogix tank battery program from a previous project - real production code with tank level monitoring, pump sequencing, and alarm logic. This becomes his validation case: if he can recreate this in go-plc and it's actually better, the project succeeds.
-
-Andy starts by researching existing Go libraries to accelerate development. He finds `simonvetter/modbus` for Modbus TCP and `gopcua/opcua` for OPC UA server capabilities. For advanced protocol support in Phase 2, he discovers Zenoh - a next-generation pub/sub protocol with demonstrated 900+ channels @ 100Hz performance on edge devices. He plans to contribute to the `zenoh-go` bindings, building both his portfolio and the open-source ecosystem. Standing on the shoulders of these existing libraries means he can focus on the core PLC runtime architecture rather than reinventing low-level protocol handling.
-
-He builds the project structure, integrating these libraries into a cohesive runtime. The YAML configuration system comes next - he wants users to define variables once and have them auto-expose to all protocols (Modbus, OPC UA, GraphQL, and eventually Zenoh).
-
-The critical moment comes when he uses AI to analyze his CompactLogix program and help translate the logic into Go tasks. The AI understands the control patterns and generates clean Go code. Andy refines it, adds proper error handling, and implements the tank battery logic. When he runs it for the first time and sees the same control behavior as the CompactLogix version - but with faster iteration cycles and readable code - he knows he's onto something.
-
-He spends significant time on documentation, creating a comprehensive Docusaurus site. He wants someone like Marcus (the automation engineer from Journey 1) to be able to adopt go-plc without Andy having to personally onboard them. Installation guides, configuration examples, the tank battery walkthrough, performance benchmarks - all documented thoroughly.
-
-When Andy deploys the final system, integrates it with Ignition SCADA via OPC UA, and validates the performance metrics (<50µs task execution, <10ms API response), he has his answer to the ultimate question: "Would I use this in a real control project?"
-
-Yes. Absolutely yes.
-
-He submits his capstone with confidence - not just because it demonstrates Go skills, concurrency, real-time systems, and protocol integration - but because he's built something he'd actually recommend to other engineers.
-
-**This journey reveals requirements for:**
-- Integration with existing Go libraries (simonvetter/modbus, gopcua/opcua)
-- Optional Zenoh protocol integration for Phase 2 (high-performance pub/sub with zenoh-go contribution)
-- YAML configuration system with single-definition principle
-- AI-friendly code structure for migration assistance
-- Performance validation framework (benchmarking <50µs, <10ms targets)
-- Comprehensive Docusaurus documentation site
-- Tank battery reference implementation with migration walkthrough
-- Testing framework (Python Modbus simulator, Ignition integration tests)
-
 ### Journey Requirements Summary
 
 **Core PLC Runtime Capabilities:**
@@ -428,25 +394,25 @@ The industry has been trying to "modernize" IEC 61131-3 by adding Git integratio
 
 **Differentiation:**
 
-Not competing with Tentacle PLC - building on its proven philosophy with a different implementation approach (compiled Go vs. JavaScript) optimized for performance-critical applications and Boot.dev capstone demonstration of advanced Go skills.
+Not competing with Tentacle PLC - building on its proven philosophy with a different implementation approach (compiled Go vs. JavaScript) optimized for performance-critical applications.
 
 ### Validation Approach
 
-**Primary Validation: CompactLogix Tank Battery Migration**
+**Primary Validation: Tank Battery Example**
 
-The innovation will be validated through a real-world test case:
+The innovation will be validated through a realistic test case:
 
-1. **Existing Production Logic:** Tank battery control program from CompactLogix (tank level monitoring, pump sequencing, alarm logic)
-2. **AI-Assisted Translation:** Use AI to analyze Rockwell logic and generate equivalent Go code
-3. **Functional Equivalence:** go-plc implementation must control tank battery identically to CompactLogix version
+1. **Example Control Logic:** Tank battery control application (tank level monitoring, pump sequencing, alarm logic)
+2. **AI-Assisted Translation:** Use AI to translate equivalent ladder logic into Go code
+3. **Functional Equivalence:** go-plc implementation must control the tank battery identically to a traditional PLC implementation
 4. **Performance Validation:** Achieve <50µs task execution overhead and <10ms API response times
 5. **Integration Validation:** Successfully integrate with Ignition SCADA via OPC UA
 
 **Success Criteria:**
 
-Answer the question: "Would I actually use this in a real control project?"
+Answer the question: "Would an engineer actually use this in a real control project?"
 
-If go-plc can replace CompactLogix for a production tank battery with:
+If go-plc can replace a traditional PLC for a tank battery with:
 - Faster iteration cycles (<1 minute vs. 20+ minutes)
 - Clearer, more maintainable code
 - Modern development workflow (Git, VS Code, CI/CD)
@@ -459,7 +425,7 @@ Then the innovation succeeds.
 - Python Modbus simulator for hardware-independent testing
 - Ignition SCADA for protocol integration validation
 - Performance benchmarking framework for objective measurement
-- CompactLogix program as reference implementation
+- Equivalent ladder logic program as a comparison
 
 ### Risk Mitigation
 
@@ -481,24 +447,16 @@ Then the innovation succeeds.
 **Mitigation:**
 - **Early Benchmarking:** Performance validation framework in MVP
 - **Proven Technology:** Go designed for concurrent, real-time systems
-- **Fallback:** If performance insufficient, document findings and scope lessons learned for capstone
+- **Fallback:** If performance insufficient, document findings and lessons learned
 
 **Innovation Risk: Protocol Complexity**
 
-**Risk:** Implementing OPC UA, Modbus, GraphQL might exceed 50-hour timeline.
+**Risk:** Implementing OPC UA, Modbus, GraphQL might exceed the MVP timeline.
 
 **Mitigation:**
 - **Leverage Existing Libraries:** simonvetter/modbus, gopcua/opcua
 - **Clear MVP Scope:** Working tank battery with Modbus + OPC UA + GraphQL proves concept
 - **Phase 2 Advanced Protocols:** Zenoh integration deferred to post-MVP for advanced performance scenarios
-
-**The Ultimate Fallback:**
-
-Even if adoption is limited, the capstone demonstrates:
-- Advanced Go skills (concurrency, protocols, real-time systems)
-- Real-world engineering problem-solving
-- Comprehensive documentation and testing
-- Something the developer would actually use
 
 ## IoT/Embedded Specific Requirements
 

@@ -18,7 +18,7 @@
 #   drafted       - Story file created in docs/sprint-artifacts/{story-id}.md
 #                   Contains detailed requirements, AC, and implementation notes
 #   ready-for-dev - Story reviewed, questions answered, context file created
-#                   Ready for you (Andy) to start implementation
+#                   Ready for the developer to start implementation
 #   in-progress   - You're actively coding this story
 #   review        - Implementation complete, needs code review & testing
 #   done          - Story fully complete, merged, tested, verified
@@ -41,7 +41,7 @@
 #    - Story context file created: {story-id}-context.md
 #    - All acceptance criteria clear and actionable
 #
-# 3. You (Andy) start implementation → status becomes 'in-progress'
+# 3. The developer starts implementation → status becomes 'in-progress'
 #    - Update this file manually when you begin work
 #    - Use /bmad:bmm:workflows:dev-story for AI-assisted development
 #

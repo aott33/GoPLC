@@ -6,14 +6,12 @@ inputDocuments:
 workflowType: 'ux-design'
 lastStep: 14
 project_name: 'go-plc'
-user_name: 'Andy'
 date: '2025-12-14'
 status: complete
 ---
 
 # UX Design Specification go-plc
 
-**Author:** Andy
 **Date:** 2025-12-14
 
 ---
@@ -151,7 +149,7 @@ Following ISA-101 High Performance HMI principles:
 - Logo positioned in top-left corner
 - **Adopt:** Card-based content organization, source tagging pattern, logo placement
 
-**Level23 Solutions SCADA**
+**Modern SCADA HMI (ISA-101 style)**
 - Clean theme with navy/teal accent colors
 - Status cards with clear hierarchy: primary metric → status → supporting data
 - Semantic color for status text (green=good, orange=warning, red=error)
@@ -242,7 +240,7 @@ Following ISA-101 High Performance HMI principles:
 
 3. **Bundle size** - All lightweight choices support the single-binary deployment model (Go embed).
 
-4. **Solo developer velocity** - Tailwind utilities + shadcn/ui components enable rapid development without context-switching to CSS files.
+4. **Developer velocity** - Tailwind utilities + shadcn/ui components enable rapid development without context-switching to CSS files.
 
 5. **Dark theme native** - Both Tailwind and shadcn/ui have excellent dark mode support out of the box.
 

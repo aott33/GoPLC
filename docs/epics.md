@@ -5,7 +5,6 @@ inputDocuments:
   - 'docs/architecture.md'
   - 'docs/ux-design-specification.md'
 project_name: 'go-plc'
-user_name: 'Andy'
 date: '2025-12-15'
 ---
 

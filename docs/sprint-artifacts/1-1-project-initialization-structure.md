@@ -124,7 +124,7 @@ The `internal/` directory is a Go convention - code here can only be imported by
 go mod init github.com/yourusername/go-plc
 ```
 
-**Replace `yourusername`** with your actual GitHub username (e.g., `andrewott`).
+**Replace `yourusername`** with your actual GitHub username.
 
 This creates `go.mod` which tells Go:
 - What this module is called
@@ -651,8 +651,7 @@ This story implements the project structure defined in:
 
 ## Dev Notes After Completion
 
-- running go mod init create a go.mod file with go version 1.24.5
-  - I ran go mod edit -go=1.25 to update the version
+- `go mod init` created go.mod with Go 1.24.5; it was updated with `go mod edit -go=1.25`
 
 ### Files Created
 
