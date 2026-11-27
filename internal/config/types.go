@@ -1,22 +1,24 @@
 package config
 
+import "github.com/aott33/go-plc/internal/source"
+
+// Config is the parsed and validated application configuration.
 type Config struct {
 	LogLevel  string
-	Sources   []Sources
-	Variables []Variables
+	Sources   []Source
+	Variables []Variable
 }
 
-type Sources struct {
-	Name   string       `yaml:"name"`
-	Type   string       `yaml:"type"`
-	Config SourceConfig // Interface - will hold concrete type
+// Source is one configured data source. Config holds the protocol-specific
+// configuration returned by the source registry.
+type Source struct {
+	Name   string
+	Type   string
+	Config source.SourceConfig
 }
 
-type SourceConfig struct {
-	Validate error
-}
-
-type Variables struct {
+// Variable is a named value read from a source.
+type Variable struct {
 	Name     string   `yaml:"name"`
 	Source   string   `yaml:"source"`
 	DataType string   `yaml:"dataType"`

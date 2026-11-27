@@ -20,7 +20,8 @@ type Source interface {
 // SourceConfig represents protocol-specific configuration.
 // Each protocol implements this interface.
 type SourceConfig interface {
-	// Validate checks required fields, applies defaults, and validates field values.
+	// Validate checks required fields and field values.
+	// Defaults are applied by the SourceFactory before Validate is called.
 	Validate() error
 
 	// SourceType returns the protocol type string (e.g., "modbus-tcp").
